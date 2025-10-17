@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     API_STR: str = "/api"
     
     # Database
-    DATABASE_URL: str = "mysql+mysqlconnector://root:root@localhost:3306/fooddetector"
+    DATABASE_URL: str = "mysql+mysqlconnector://root:root@localhost:3306/newschema"
     
     # Security
     SECRET_KEY: str = "your-secret-key"

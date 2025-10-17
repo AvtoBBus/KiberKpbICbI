@@ -9,6 +9,10 @@ class Food(Base):
     Name: Mapped[str] = mapped_column(String)
     CategoryID: Mapped[int] = mapped_column(ForeignKey("foodcategories.CategoryID"))
     Category: Mapped["FoodCategory"] = relationship(back_populates="Food")
+    Calories: Mapped[int] = mapped_column(Integer)
+    Protein: Mapped[int] = mapped_column(Integer)
+    Fats: Mapped[int] = mapped_column(Integer)
+    Carbonatest: Mapped[int] = mapped_column(Integer)
 
 
 class FoodCategory(Base):
