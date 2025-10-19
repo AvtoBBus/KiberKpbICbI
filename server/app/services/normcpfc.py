@@ -6,8 +6,8 @@ class NormCPFCService:
     def __init__(self, db: Session):
         self.db = db
     
-    def get_normcpfc_id(self, norm_id: int):
-        return self.db.query(NormCPFC).filter(NormCPFC.NormID == norm_id).first()
+    def get_normcpfc_id(self, user_id: int, norm_id: int):
+        return self.db.query(NormCPFC).filter(NormCPFC.UserID == user_id).filter(NormCPFC.NormID == norm_id).first()
     
-    def get_normcpfc(self):
-        return self.db.query(NormCPFC).all()
+    def get_normcpfc(self, user_id: int):
+        return self.db.query(NormCPFC).filter(NormCPFC.UserID == user_id).all()

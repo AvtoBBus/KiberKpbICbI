@@ -3,6 +3,8 @@ from typing import Any
 
 class NormCPFCBase(BaseModel):
     NormID: int
+
+class NormCPFCResponse(NormCPFCBase):
     MinHeight: int
     MaxHeight: int
     MinWeight: int
@@ -11,9 +13,6 @@ class NormCPFCBase(BaseModel):
     Protein: int
     Fats: int
     Carbonatest: int
-
-class NormCPFCResponse(NormCPFCBase):
-    Goal: str
 
     class Config:
         from_attributes = True

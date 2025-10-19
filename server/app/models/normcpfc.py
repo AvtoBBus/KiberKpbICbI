@@ -2,7 +2,6 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from app.utils.db import Base
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 
-from .usergoal import UserGoal
 
 class NormCPFC(Base):
     __tablename__ = "normcpfc"
@@ -17,7 +16,6 @@ class NormCPFC(Base):
     Fats: Mapped[int] = mapped_column(Integer)
     Carbonatest: Mapped[int] = mapped_column(Integer)
 
-    GoalID: Mapped[int] = mapped_column(ForeignKey("usergoal.GoalID"))
-    Goal: Mapped["UserGoal"] = relationship(back_populates="NormCPFC")
+    UserID: Mapped[int] = mapped_column(ForeignKey("user.UserID"))
 
     UserData: Mapped[list["UserData"]] = relationship(back_populates="Norm")

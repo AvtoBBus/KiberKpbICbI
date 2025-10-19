@@ -8,10 +8,10 @@ from app.services.normcpfc import NormCPFCService
 router = APIRouter()
 
 
-@router.get("/normcpfc", response_model=List[NormCPFCResponse])
-def get_normcpfc(db: Session = Depends(get_db)):
+@router.get("/normcpfc/{user_id}", response_model=List[NormCPFCResponse])
+def get_normcpfc(user_id: int, db: Session = Depends(get_db)):
     service = NormCPFCService(db)
-    norms = service.get_normcpfc()
+    norms = service.get_normcpfc(user_id)
     return [
         NormCPFCResponse(
             NormID=norm.NormID,
@@ -23,14 +23,13 @@ def get_normcpfc(db: Session = Depends(get_db)):
             Protein=norm.Protein,
             Fats=norm.Fats,
             Carbonatest=norm.Carbonatest,
-            Goal=norm.Goal.Name
         ) for norm in norms
     ]
 
-@router.get("/normcpfc/{norm_id}", response_model=NormCPFCResponse)
-def get_normcpfc_id(norm_id: int, db: Session = Depends(get_db)):
+@router.get("/normcpfc/{user_id}/{norm_id}", response_model=NormCPFCResponse)
+def get_normcpfc_id(user_id: int, norm_id: int, db: Session = Depends(get_db)):
     service = NormCPFCService(db)
-    norm = service.get_normcpfc_id(norm_id)
+    norm = service.get_normcpfc_id(user_id, norm_id)
     return NormCPFCResponse(
         NormID=norm.NormID,
         MinHeight=norm.MinHeight,
@@ -41,5 +40,4 @@ def get_normcpfc_id(norm_id: int, db: Session = Depends(get_db)):
         Protein=norm.Protein,
         Fats=norm.Fats,
         Carbonatest=norm.Carbonatest,
-        Goal=norm.Goal.Name
     )
