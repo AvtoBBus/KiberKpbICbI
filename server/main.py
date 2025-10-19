@@ -8,6 +8,7 @@ from app.routers import normcpfc as normcpfc_router
 from app.routers import userdata as userdata_router
 from app.routers import user as user_router
 from app.routers import statisticwh as statisticwh_router
+from app.routers import meal as meal_router
 
 app = FastAPI(
     swagger_ui_parameters={ "syntaxHighlight": True }
@@ -26,3 +27,4 @@ app.include_router(normcpfc_router.router, prefix=config.settings.API_STR, tags=
 app.include_router(userdata_router.router, prefix=config.settings.API_STR, tags=["Получение данных пользователя"])
 app.include_router(user_router.router, prefix=config.settings.API_STR, tags=["Получение пользователя"])
 app.include_router(statisticwh_router.router, prefix=config.settings.API_STR, tags=["Получение статистики пользователя"])
+app.include_router(meal_router.router, prefix=config.settings.API_STR, tags=["Получение приемов пищи пользователя"])
