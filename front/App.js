@@ -1,9 +1,9 @@
 import { useFonts } from "expo-font";
 import React, { useCallback } from "react";
-import { StyleSheet, Text, SafeAreaView } from "react-native";
-import { mainStyle } from "./style";
+import { Text } from "react-native";
 import { FONT_MAP } from "./assets/fonts";
 import * as SplashScreen from "expo-splash-screen";
+import Router from "./router";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -17,22 +17,6 @@ export default function App() {
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
-    return (
-      <SafeAreaView>
-        <Text>Загрузка</Text>
-      </SafeAreaView>
-    );
-  } else
-    return (
-      <SafeAreaView onLayout={onLayoutRootView}>
-        <Text style={mainStyle.title}>Приложение</Text>
-      </SafeAreaView>
-    );
+    return <Text>Загрузка, которую потом сделаем</Text>;
+  } else return <Router />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-});
