@@ -17,5 +17,3 @@ class NormCPFC(Base):
     Carbonatest: Mapped[int] = mapped_column(Integer)
 
     UserID: Mapped[int] = mapped_column(ForeignKey("user.UserID"))
-
-    UserData: Mapped[list["UserData"]] = relationship(back_populates="Norm")

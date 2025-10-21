@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.statisticcpfc import StatisticCPFC
+from app.schemas.statisticcpfc import StatisticCPFCRequest
 # from app.core.security import get_password_hash
 
 class StatisticCPFCService:
@@ -11,3 +12,19 @@ class StatisticCPFCService:
     
     def get_statisticwh(self, user_id: int):
         return self.db.query(StatisticCPFC).filter(StatisticCPFC.UserID == user_id).all()
+        
+    def add_statisticcpfc(self, user_id: int, new_statisticcpfc: StatisticCPFCRequest):
+
+        inserted = StatisticCPFC(
+            Date = new_statisticcpfc.Date,
+            Calories = new_statisticcpfc.Calories,
+            Protein = new_statisticcpfc.Protein,
+            Fat = new_statisticcpfc.Fat,
+            Carbonates = new_statisticcpfc.Carbonates,
+            UserID = user_id
+        )
+
+        self.db.add(inserted)
+        self.db.commit()
+
+        return inserted

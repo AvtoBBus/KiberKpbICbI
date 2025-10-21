@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from app.schemas.userdata import UserDataResponse
+from app.schemas.userdata import UserDataResponse, UserDataRequest
 from app.utils.db import get_db
 from app.services.userdata import UserDataService
 
@@ -18,12 +18,6 @@ def get_userdata(user_id: int, db: Session = Depends(get_db)):
             Height=userData.Height,
             Weight=userData.Weight,
             Age=userData.Age,
-            Norm={
-                "MinHeight": userData.Norm.MinHeight,
-                "MaxHeight": userData.Norm.MaxHeight,
-                "MinWeight": userData.Norm.MinWeight,
-                "MaxWeight": userData.Norm.MaxWeight,
-            }
         ) for userData in data
     ]
 
@@ -37,10 +31,17 @@ def get_userdata_id(user_id: int, user_data_id: int, db: Session = Depends(get_d
         Height=userData.Height,
         Weight=userData.Weight,
         Age=userData.Age,
-        Norm={
-            "MinHeight": userData.Norm.MinHeight,
-            "MaxHeight": userData.Norm.MaxHeight,
-            "MinWeight": userData.Norm.MinWeight,
-            "MaxWeight": userData.Norm.MaxWeight,
-        }
     )
+
+
+@router.post("/userdata/{user_id}", response_model=UserDataResponse)
+def get_userdata_id(user_id: int, new_user_data: UserDataRequest, db: Session = Depends(get_db)):
+    service = UserDataService(db)
+    inserted = service.add_userdata(user_id, new_user_data)
+    return UserDataResponse(
+        UserDataID=inserted.UserDataID,
+        Height=inserted.Height,
+        Weight=inserted.Weight,
+        Age=inserted.Age,
+    )
+

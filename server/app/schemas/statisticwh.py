@@ -10,3 +10,8 @@ class StatisticWHResponse(StatisticWHBase):
     Date: datetime
     Height: int
     Weight: int
+
+class StatisticWHRequest(StatisticWHBase):
+    Date: datetime
+    Height: int
+    Weight: int

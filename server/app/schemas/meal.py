@@ -5,10 +5,18 @@ from datetime import datetime
 
 class MealBase(BaseModel):
     MealID: int
+    Date: datetime
 
 class MealResponse(MealBase):
-    Date: datetime
     MealType: str
+
+    class Config:
+        from_attributes = True
+
+class MealRequest(MealBase):
+    MealType: str
+    FoodID: int
+    Weight: int
 
     class Config:
         from_attributes = True

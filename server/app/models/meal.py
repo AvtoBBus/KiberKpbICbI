@@ -2,11 +2,11 @@ from sqlalchemy import Column, ForeignKey, Integer, Enum, DateTime
 from app.utils.db import Base
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 from datetime import datetime
-from typing import Literal, get_args
+from typing import get_args
+
+from app.utils.mealtype import MealTypeEnum
 
 from .user import User
-
-MealTypeEnum = Literal["breakfast","lunch","dinner"]
 
 class Meal(Base):
     __tablename__ = "meal"

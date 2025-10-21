@@ -12,3 +12,10 @@ class StatisticCPFCResponse(StatisticCPFCBase):
     Protein: int 
     Fat: int 
     Carbonates: int
+
+class StatisticCPFCRequest(StatisticCPFCBase):
+    Date: datetime
+    Calories: int 
+    Protein: int 
+    Fat: int 
+    Carbonates: int

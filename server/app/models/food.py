@@ -12,7 +12,7 @@ class Food(Base):
     Calories: Mapped[int] = mapped_column(Integer)
     Protein: Mapped[int] = mapped_column(Integer)
     Fats: Mapped[int] = mapped_column(Integer)
-    Carbonatest: Mapped[int] = mapped_column(Integer)
+    Carbonates: Mapped[int] = mapped_column(Integer)
 
 
 class FoodCategory(Base):
