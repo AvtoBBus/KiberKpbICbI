@@ -1,16 +1,27 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from typing import List
 from app.schemas.statisticwh import StatisticWHDTO, StatisticWHDTO
 from app.utils.db import get_db
 from app.services.statisticwh import StatisticWHService
+from app.services.user import UserService
 
 router = APIRouter()
 
-@router.get("/statisticwh/{user_id}", response_model=List[StatisticWHDTO])
-def get_statisticwh(user_id: int, db: Session = Depends(get_db)):
+@router.get("/statisticwh", response_model=List[StatisticWHDTO])
+def get_statisticwh(request: Request, db: Session = Depends(get_db)):
+    auth = UserService(db)
+    try:
+        token = request.cookies.get("token")
+        user = auth.get_user(token)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect token",
+        )
+
     service = StatisticWHService(db)
-    stats = service.get_statisticwh(user_id)
+    stats = service.get_statisticwh(user.UserID)
     return [
         StatisticWHDTO(
             StatisticWHID=statisticwh.StatisticWHID,
@@ -20,10 +31,20 @@ def get_statisticwh(user_id: int, db: Session = Depends(get_db)):
         ) for statisticwh in stats
     ]
 
-@router.get("/statisticwh/{user_id}/{statisticwh_id}", response_model=StatisticWHDTO)
-def get_statisticwh_id(user_id: int, statisticwh_id: int, db: Session = Depends(get_db)):
+@router.get("/statisticwh/{statisticwh_id}", response_model=StatisticWHDTO)
+def get_statisticwh_id(request: Request, statisticwh_id: int, db: Session = Depends(get_db)):
+    auth = UserService(db)
+    try:
+        token = request.cookies.get("token")
+        user = auth.get_user(token)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect token",
+        )
+    
     service = StatisticWHService(db)
-    statisticwh = service.get_statisticwh_id(user_id, statisticwh_id)
+    statisticwh = service.get_statisticwh_id(user.UserID, statisticwh_id)
     return StatisticWHDTO(
         StatisticWHID=statisticwh.StatisticWHID,
         Date=statisticwh.Date,
@@ -32,10 +53,20 @@ def get_statisticwh_id(user_id: int, statisticwh_id: int, db: Session = Depends(
     )
 
 
-@router.post("/statisticwh/{user_id}", response_model=StatisticWHDTO)
-def get_statisticwh_id(user_id: int, new_statisticwh: StatisticWHDTO, db: Session = Depends(get_db)):
+@router.post("/statisticwh", response_model=StatisticWHDTO)
+def get_statisticwh_id(request: Request, new_statisticwh: StatisticWHDTO, db: Session = Depends(get_db)):
+    auth = UserService(db)
+    try:
+        token = request.cookies.get("token")
+        user = auth.get_user(token)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect token",
+        )
+    
     service = StatisticWHService(db)
-    inserted = service.add_statisticwh(user_id, new_statisticwh)
+    inserted = service.add_statisticwh(user.UserID, new_statisticwh)
     return StatisticWHDTO(
         StatisticWHID=inserted.StatisticWHID,
         Date=inserted.Date,

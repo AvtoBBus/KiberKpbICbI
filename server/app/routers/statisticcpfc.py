@@ -1,16 +1,28 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from typing import List
 from app.schemas.statisticcpfc import StatisticCPFCDTO, StatisticCPFCDTO
 from app.utils.db import get_db
 from app.services.statisticcpfc import StatisticCPFCService
+from app.services.user import UserService
 
 router = APIRouter()
 
-@router.get("/statisticcpfc/{user_id}", response_model=List[StatisticCPFCDTO])
-def get_statisticcpfc(user_id: int, db: Session = Depends(get_db)):
+@router.get("/statisticcpfc", response_model=List[StatisticCPFCDTO])
+def get_statisticcpfc(request: Request, db: Session = Depends(get_db)):
+
+    auth = UserService(db)
+    try:
+        token = request.cookies.get("token")
+        user = auth.get_user(token)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect token",
+        )
+
     service = StatisticCPFCService(db)
-    stats = service.get_statisticwh(user_id)
+    stats = service.get_statisticwh(user.UserID)
     return [
         StatisticCPFCDTO(
             StatisticCPFCID=statisticcpfc.StatisticCPFCID,
@@ -22,10 +34,21 @@ def get_statisticcpfc(user_id: int, db: Session = Depends(get_db)):
         ) for statisticcpfc in stats
     ]
 
-@router.get("/statisticcpfc/{user_id}/{statisticcpfc_id}", response_model=StatisticCPFCDTO)
-def get_statisticcpfc_id(user_id: int, statisticcpfc_id: int, db: Session = Depends(get_db)):
+@router.get("/statisticcpfc/{statisticcpfc_id}", response_model=StatisticCPFCDTO)
+def get_statisticcpfc_id(request: Request, statisticcpfc_id: int, db: Session = Depends(get_db)):
+
+    auth = UserService(db)
+    try:
+        token = request.cookies.get("token")
+        user = auth.get_user(token)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect token",
+        )
+    
     service = StatisticCPFCService(db)
-    statisticcpfc = service.get_statisticwh_id(user_id, statisticcpfc_id)
+    statisticcpfc = service.get_statisticwh_id(user.UserID, statisticcpfc_id)
     return StatisticCPFCDTO(
         StatisticCPFCID=statisticcpfc.StatisticCPFCID,
         Date=statisticcpfc.Date,
@@ -35,10 +58,21 @@ def get_statisticcpfc_id(user_id: int, statisticcpfc_id: int, db: Session = Depe
         Carbonates=statisticcpfc.Carbonates
     )
 
-@router.post("/statisticcpfc/{user_id}", response_model=StatisticCPFCDTO)
-def get_statisticwh_id(user_id: int, new_statisticcpfc: StatisticCPFCDTO, db: Session = Depends(get_db)):
+@router.post("/statisticcpfc", response_model=StatisticCPFCDTO)
+def get_statisticwh_id(request: Request, new_statisticcpfc: StatisticCPFCDTO, db: Session = Depends(get_db)):
+
+    auth = UserService(db)
+    try:
+        token = request.cookies.get("token")
+        user = auth.get_user(token)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect token",
+        )
+    
     service = StatisticCPFCService(db)
-    inserted = service.add_statisticcpfc(user_id, new_statisticcpfc)
+    inserted = service.add_statisticcpfc(user.UserID, new_statisticcpfc)
     return StatisticCPFCDTO(
         StatisticCPFCID=inserted.StatisticCPFCID,
         Date=inserted.Date,
