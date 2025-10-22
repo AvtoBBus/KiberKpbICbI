@@ -1,19 +1,19 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from app.schemas.normcpfc import NormCPFCResponse, NormCPFCRequest
+from app.schemas.normcpfc import NormCPFCDTO, NormCPFCDTO
 from app.utils.db import get_db
 from app.services.normcpfc import NormCPFCService
 
 router = APIRouter()
 
 
-@router.get("/normcpfc/{user_id}", response_model=List[NormCPFCResponse])
+@router.get("/normcpfc/{user_id}", response_model=List[NormCPFCDTO])
 def get_normcpfc(user_id: int, db: Session = Depends(get_db)):
     service = NormCPFCService(db)
     norms = service.get_normcpfc(user_id)
     return [
-        NormCPFCResponse(
+        NormCPFCDTO(
             NormID=norm.NormID,
             MinHeight=norm.MinHeight,
             MaxHeight=norm.MaxHeight,
@@ -26,11 +26,11 @@ def get_normcpfc(user_id: int, db: Session = Depends(get_db)):
         ) for norm in norms
     ]
 
-@router.get("/normcpfc/{user_id}/{norm_id}", response_model=NormCPFCResponse)
+@router.get("/normcpfc/{user_id}/{norm_id}", response_model=NormCPFCDTO)
 def get_normcpfc_id(user_id: int, norm_id: int, db: Session = Depends(get_db)):
     service = NormCPFCService(db)
     norm = service.get_normcpfc_id(user_id, norm_id)
-    return NormCPFCResponse(
+    return NormCPFCDTO(
         NormID=norm.NormID,
         MinHeight=norm.MinHeight,
         MaxHeight=norm.MaxHeight,
@@ -42,11 +42,11 @@ def get_normcpfc_id(user_id: int, norm_id: int, db: Session = Depends(get_db)):
         Carbonatest=norm.Carbonatest,
     )
 
-@router.post("/normcpfc/{user_id}", response_model=NormCPFCResponse)
-def get_normcpfc_id(user_id: int, new_norm: NormCPFCRequest, db: Session = Depends(get_db)):
+@router.post("/normcpfc/{user_id}", response_model=NormCPFCDTO)
+def get_normcpfc_id(user_id: int, new_norm: NormCPFCDTO, db: Session = Depends(get_db)):
     service = NormCPFCService(db)
     inserted = service.add_normcpfc(user_id, new_norm)
-    return NormCPFCResponse(
+    return NormCPFCDTO(
         NormID=inserted.NormID,
         MinHeight=inserted.MinHeight,
         MaxHeight=inserted.MaxHeight,

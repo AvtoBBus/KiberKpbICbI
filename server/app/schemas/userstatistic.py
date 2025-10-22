@@ -5,7 +5,7 @@ from datetime import datetime
 class UserStatisticBase(BaseModel):
     UserID: int
 
-class UserStatisticResponse(UserStatisticBase):
+class UserStatisticDTO(UserStatisticBase):
     Date: datetime 
     UserHeight: int 
     UserWeight: int 

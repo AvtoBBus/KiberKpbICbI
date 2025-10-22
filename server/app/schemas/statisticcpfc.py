@@ -6,14 +6,7 @@ class StatisticCPFCBase(BaseModel):
     StatisticCPFCID: int
 
 
-class StatisticCPFCResponse(StatisticCPFCBase):
-    Date: datetime
-    Calories: int 
-    Protein: int 
-    Fat: int 
-    Carbonates: int
-
-class StatisticCPFCRequest(StatisticCPFCBase):
+class StatisticCPFCDTO(StatisticCPFCBase):
     Date: datetime
     Calories: int 
     Protein: int 

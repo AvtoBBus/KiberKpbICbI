@@ -6,12 +6,7 @@ class StatisticWHBase(BaseModel):
     StatisticWHID: int
 
 
-class StatisticWHResponse(StatisticWHBase):
-    Date: datetime
-    Height: int
-    Weight: int
-
-class StatisticWHRequest(StatisticWHBase):
+class StatisticWHDTO(StatisticWHBase):
     Date: datetime
     Height: int
     Weight: int

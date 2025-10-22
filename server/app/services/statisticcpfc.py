@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.statisticcpfc import StatisticCPFC
-from app.schemas.statisticcpfc import StatisticCPFCRequest
+from app.schemas.statisticcpfc import StatisticCPFCDTO
 # from app.core.security import get_password_hash
 
 class StatisticCPFCService:
@@ -13,7 +13,7 @@ class StatisticCPFCService:
     def get_statisticwh(self, user_id: int):
         return self.db.query(StatisticCPFC).filter(StatisticCPFC.UserID == user_id).all()
         
-    def add_statisticcpfc(self, user_id: int, new_statisticcpfc: StatisticCPFCRequest):
+    def add_statisticcpfc(self, user_id: int, new_statisticcpfc: StatisticCPFCDTO):
 
         inserted = StatisticCPFC(
             Date = new_statisticcpfc.Date,

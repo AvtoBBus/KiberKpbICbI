@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.meal import Meal
 from app.models.foodinmeal import FoodInMeal
-from app.schemas.meal import MealRequest
+from app.schemas.meal import MeaDTOPost
 # from app.core.security import get_password_hash
 
 class MealService:
@@ -14,7 +14,7 @@ class MealService:
     def get_meal(self, user_id: int):
         return self.db.query(Meal).filter(Meal.UserID == user_id).all()
     
-    def add_meal(self, user_id: int, new_meal: MealRequest):
+    def add_meal(self, user_id: int, new_meal: MeaDTOPost):
         
         insertedMeal = Meal(
             Date=new_meal.Date,

@@ -9,13 +9,13 @@ class FoodBase(BaseModel):
     Fats: int
     Carbonates: int 
 
-class FoodResponse(FoodBase):
+class FoodDTO(FoodBase):
     Category: str
 
     class Config:
         from_attributes = True
 
-class FoodRequest(FoodBase):
+class FoodDTOPost(FoodBase):
     CategoryID: int
     
     class Config:

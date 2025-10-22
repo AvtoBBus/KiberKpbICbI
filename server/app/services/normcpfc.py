@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.normcpfc import NormCPFC
-from app.schemas.normcpfc import NormCPFCRequest
+from app.schemas.normcpfc import NormCPFCDTO
 # from app.core.security import get_password_hash
 
 class NormCPFCService:
@@ -13,7 +13,7 @@ class NormCPFCService:
     def get_normcpfc(self, user_id: int):
         return self.db.query(NormCPFC).filter(NormCPFC.UserID == user_id).all()
         
-    def add_normcpfc(self, user_id: int, new_norm: NormCPFCRequest):
+    def add_normcpfc(self, user_id: int, new_norm: NormCPFCDTO):
 
         inserted = NormCPFC(
             MinHeight=new_norm.MinHeight,

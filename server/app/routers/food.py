@@ -1,19 +1,19 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from app.schemas.food import FoodResponse, FoodRequest
+from app.schemas.food import FoodDTO, FoodDTOPost
 from app.utils.db import get_db
 from app.services.food import FoodService
 
 router = APIRouter()
 BASE_STR = "/foods"
 
-@router.get(f"{BASE_STR}", response_model=List[FoodResponse])
+@router.get(f"{BASE_STR}", response_model=List[FoodDTO])
 def get_food(db: Session = Depends(get_db)):
     service = FoodService(db)
     foods = service.get_food()
     return [
-        FoodResponse(
+        FoodDTO(
             FoodID=food.FoodID,
             Name=food.Name,
             Category=food.Category.CategoryName,
@@ -24,11 +24,11 @@ def get_food(db: Session = Depends(get_db)):
         ) for food in foods
     ]
 
-@router.get(BASE_STR + "/{food_id}", response_model=FoodResponse)
+@router.get(BASE_STR + "/{food_id}", response_model=FoodDTO)
 def get_food(food_id: int, db: Session = Depends(get_db)):
     service = FoodService(db)
     food = service.get_food_id(food_id)
-    return FoodResponse(
+    return FoodDTO(
         FoodID=food.FoodID,
         Name=food.Name,
         Category=food.Category.CategoryName,
@@ -38,11 +38,11 @@ def get_food(food_id: int, db: Session = Depends(get_db)):
         Carbonates=food.Carbonates
     )
 
-@router.post(f"{BASE_STR}", response_model=FoodResponse)
-def add_food(new_food: FoodRequest, db: Session = Depends(get_db)):
+@router.post(f"{BASE_STR}", response_model=FoodDTO)
+def add_food(new_food: FoodDTOPost, db: Session = Depends(get_db)):
     service = FoodService(db)
     inserted = service.add_food(new_food)
-    return FoodResponse(
+    return FoodDTO(
         FoodID=inserted.FoodID,
         Name=inserted.Name,
         Category=inserted.Category.CategoryName,

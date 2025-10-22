@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.food import Food
-from app.schemas.food import FoodRequest
+from app.schemas.food import FoodDTOPost
 # from app.core.security import get_password_hash
 
 class FoodService:
@@ -13,7 +13,7 @@ class FoodService:
     def get_food(self):
         return self.db.query(Food).all()
 
-    def add_food(self, new_food: FoodRequest):
+    def add_food(self, new_food: FoodDTOPost):
 
         inserted = Food(
             Name=new_food.Name,

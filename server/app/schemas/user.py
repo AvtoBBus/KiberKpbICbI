@@ -1,11 +1,15 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import Optional
 
 class UserBase(BaseModel):
     UserID: int
 
 
-class UserResponse(UserBase):
+class UserDTO(UserBase):
     UserName: str
-    Email: str
+    Email: EmailStr
     Phone: Optional[str]
+
+class UserDTOLogin(BaseModel):
+    Email: EmailStr
+    Password: str

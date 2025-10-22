@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.statisticwh import StatisticWH
-from app.schemas.statisticwh import StatisticWHRequest
+from app.schemas.statisticwh import StatisticWHDTO
 # from app.core.security import get_password_hash
 
 class StatisticWHService:
@@ -13,7 +13,7 @@ class StatisticWHService:
     def get_statisticwh(self, user_id: int):
         return self.db.query(StatisticWH).filter(StatisticWH.UserID == user_id).all()
     
-    def add_statisticwh(self, user_id: int, new_statisticwh: StatisticWHRequest):
+    def add_statisticwh(self, user_id: int, new_statisticwh: StatisticWHDTO):
 
         inserted = StatisticWH(
             Date = new_statisticwh.Date,

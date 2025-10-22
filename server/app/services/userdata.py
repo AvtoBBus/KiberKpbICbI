@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.userdata import UserData
-from app.schemas.userdata import UserDataRequest
+from app.schemas.userdata import UserDataDTO
 # from app.core.security import get_password_hash
 
 
@@ -14,7 +14,7 @@ class UserDataService:
     def get_userdata_id(self, user_id: int, user_data_id: int):
         return self.db.query(UserData).filter(UserData.UserID == user_id).filter(UserData.UserDataID == user_data_id).first()
 
-    def add_userdata(self, user_id: int, new_userdata: UserDataRequest):
+    def add_userdata(self, user_id: int, new_userdata: UserDataDTO):
         inserted = UserData(
             Height = new_userdata.Height,
             Weight = new_userdata.Weight,
