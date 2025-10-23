@@ -50,7 +50,14 @@ def get_userdata_id(request: Request, user_data_id: int, db: Session = Depends(g
         )
     
     service = UserDataService(db)
-    userData = service.get_userdata_id(user.UserID, user_data_id)
+    userData = service.get_userdata_id(user.UserID, user_data_id)        
+
+    if not userData:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Userdata with id {user_data_id} doesn't exist"
+        )
+
     return UserDataDTO(
         UserDataID=userData.UserDataID,
         Height=userData.Height,

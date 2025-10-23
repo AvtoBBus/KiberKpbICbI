@@ -49,6 +49,13 @@ def get_statisticcpfc_id(request: Request, statisticcpfc_id: int, db: Session = 
     
     service = StatisticCPFCService(db)
     statisticcpfc = service.get_statisticwh_id(user.UserID, statisticcpfc_id)
+
+    if not statisticcpfc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Statistic about CPFC with id {statisticcpfc_id} doesn't exist"
+        )
+    
     return StatisticCPFCDTO(
         StatisticCPFCID=statisticcpfc.StatisticCPFCID,
         Date=statisticcpfc.Date,

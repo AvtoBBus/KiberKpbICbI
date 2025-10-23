@@ -50,6 +50,13 @@ def get_meal(request: Request, meal_id: int, db: Session = Depends(get_db)):
     
     service = MealService(db)
     meal = service.get_meal_id(user.UserID, meal_id)
+
+    if not meal:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Meal with id {meal_id} doesn't exist"
+        )
+
     return MeaDTO(
         MealID = meal.MealID,
         Date = meal.Date,

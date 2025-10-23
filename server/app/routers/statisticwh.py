@@ -45,6 +45,13 @@ def get_statisticwh_id(request: Request, statisticwh_id: int, db: Session = Depe
     
     service = StatisticWHService(db)
     statisticwh = service.get_statisticwh_id(user.UserID, statisticwh_id)
+
+    if not statisticwh:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Statistic about WH with id {statisticwh_id} doesn't exist"
+        )
+
     return StatisticWHDTO(
         StatisticWHID=statisticwh.StatisticWHID,
         Date=statisticwh.Date,

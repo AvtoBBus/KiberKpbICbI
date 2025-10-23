@@ -52,6 +52,12 @@ def get_normcpfc_id(norm_id: int, request: Request, db: Session = Depends(get_db
     service = NormCPFCService(db)
     norm = service.get_normcpfc_id(user.UserID, norm_id)
 
+    if not norm:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Norm with id {norm_id} doesn't exist"
+        )
+
     return NormCPFCDTO(
         NormID=norm.NormID,
         MinHeight=norm.MinHeight,
