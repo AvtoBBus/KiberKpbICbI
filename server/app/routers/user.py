@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
 from sqlalchemy.orm import Session
 
-from app.schemas.user import UserDTO, UserDTOLogin
+from app.schemas.user import UserDTO, UserDTOLogin, UserDTOAuth
 from app.utils.db import get_db
 from app.services.user import UserService
 from app.config import config
@@ -37,12 +37,6 @@ def login(
     try:
         token = service.login(credentials)
     except:
-        response.delete_cookie(
-            key="token",
-            domain="localhost",
-            samesite="strict",
-            httponly=True
-        )
         raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect username or password",
@@ -62,3 +56,30 @@ def login(
     
     return user
 
+@router.post("/auth", response_model=UserDTO)
+def auth(
+    credentials: UserDTOAuth,
+    response: Response,
+    db: Session = Depends(get_db)
+):
+    service = UserService(db)
+    try:
+        newUser = service.auth(credentials)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User with this email or username already exist",
+        )
+    
+    token = service.login(credentials)
+    
+    response.set_cookie(
+        key="token",
+        value=token.access_token,
+        max_age=config.settings.ACCESS_TOKEN_EXPIRE_MINUTES,
+        domain="localhost",
+        samesite="strict",
+        httponly=True
+    )
+
+    return newUser

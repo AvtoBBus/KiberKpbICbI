@@ -5,9 +5,10 @@ from fastapi import status, HTTPException
 from sqlalchemy.orm import Session
 
 import jwt
+import hashlib
 
 from app.config import config
-from app.schemas.user import UserDTO, UserDTOLogin
+from app.schemas.user import UserDTO, UserDTOAuth
 from app.schemas.token import Token
 from app.utils.db import get_db
 from app.models.user import User
@@ -29,6 +30,7 @@ class Security:
         
 
     def login_for_access_token(self, email: str, password: str) -> Token:
+
         user: UserDTO = self.validate_user(email, password)
 
         if not user:
@@ -57,13 +59,15 @@ class Security:
 
     def validate_user(self, email: str, password: str) -> Union[UserDTO, bool]:
         finded = self.db.query(User).filter(User.Email == email).first()
+
         user: UserDTO = UserDTO(
             UserID=finded.UserID,
             UserName=finded.UserName,
             Email=finded.Email,
             Phone=finded.Phone
         )
-        if finded and finded.Password.__eq__(password):
+
+        if finded and finded.Password.__eq__(hashlib.sha256(password.encode()).hexdigest()):
             return user
         else:
             return False

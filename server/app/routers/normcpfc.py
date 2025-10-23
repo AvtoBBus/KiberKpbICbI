@@ -65,7 +65,7 @@ def get_normcpfc_id(norm_id: int, request: Request, db: Session = Depends(get_db
     )
 
 @router.post("/normcpfc", response_model=NormCPFCDTO)
-def get_normcpfc_id(request: Request, new_norm: NormCPFCDTO, db: Session = Depends(get_db)):
+def add_normcpfc(request: Request, new_norm: NormCPFCDTO, db: Session = Depends(get_db)):
     auth = UserService(db)
     try:
         token = request.cookies.get("token")

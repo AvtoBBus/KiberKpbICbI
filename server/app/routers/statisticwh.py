@@ -54,7 +54,7 @@ def get_statisticwh_id(request: Request, statisticwh_id: int, db: Session = Depe
 
 
 @router.post("/statisticwh", response_model=StatisticWHDTO)
-def get_statisticwh_id(request: Request, new_statisticwh: StatisticWHDTO, db: Session = Depends(get_db)):
+def add_statisticwh(request: Request, new_statisticwh: StatisticWHDTO, db: Session = Depends(get_db)):
     auth = UserService(db)
     try:
         token = request.cookies.get("token")

@@ -59,7 +59,7 @@ def get_statisticcpfc_id(request: Request, statisticcpfc_id: int, db: Session = 
     )
 
 @router.post("/statisticcpfc", response_model=StatisticCPFCDTO)
-def get_statisticwh_id(request: Request, new_statisticcpfc: StatisticCPFCDTO, db: Session = Depends(get_db)):
+def add_statisticwh(request: Request, new_statisticcpfc: StatisticCPFCDTO, db: Session = Depends(get_db)):
 
     auth = UserService(db)
     try:

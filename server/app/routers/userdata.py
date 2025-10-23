@@ -60,7 +60,7 @@ def get_userdata_id(request: Request, user_data_id: int, db: Session = Depends(g
 
 
 @router.post("/userdata", response_model=UserDataDTO)
-def get_userdata_id(request: Request, new_user_data: UserDataDTO, db: Session = Depends(get_db)):
+def add_userdata(request: Request, new_user_data: UserDataDTO, db: Session = Depends(get_db)):
         
     auth = UserService(db)
     try:

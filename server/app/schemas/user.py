@@ -13,3 +13,9 @@ class UserDTO(UserBase):
 class UserDTOLogin(BaseModel):
     Email: EmailStr
     Password: str
+
+class UserDTOAuth(BaseModel):
+    UserName: str
+    Email: EmailStr
+    Phone: Optional[str]
+    Password: str
