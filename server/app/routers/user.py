@@ -8,6 +8,7 @@ from app.config import config
 
 router = APIRouter()
 
+
 @router.get("/user", response_model=UserDTO)
 def get_user(request: Request, db: Session = Depends(get_db)):
     service = UserService(db)
@@ -27,6 +28,7 @@ def get_user(request: Request, db: Session = Depends(get_db)):
         Phone=user.Phone
     )
 
+
 @router.post("/login", response_model=UserDTO)
 def login(
     credentials: UserDTOLogin,
@@ -38,11 +40,11 @@ def login(
         token = service.login(credentials)
     except:
         raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect username or password",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-    
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     user = service.get_user(token.access_token)
 
     response.set_cookie(
@@ -53,8 +55,9 @@ def login(
         samesite="strict",
         httponly=True
     )
-    
+
     return user
+
 
 @router.post("/auth", response_model=UserDTO)
 def auth(
@@ -70,9 +73,9 @@ def auth(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User with this email or username already exist",
         )
-    
+
     token = service.login(credentials)
-    
+
     response.set_cookie(
         key="token",
         value=token.access_token,
@@ -83,3 +86,11 @@ def auth(
     )
 
     return newUser
+
+
+@router.get("/logout")
+def logout(response: Response):
+    response.delete_cookie(key="token")
+    return None
+
+
