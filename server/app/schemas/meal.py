@@ -7,13 +7,13 @@ class MealBase(BaseModel):
     MealID: int
     Date: datetime
 
-class MeaDTO(MealBase):
+class MealDTO(MealBase):
     MealType: str
 
     class Config:
         from_attributes = True
 
-class MeaDTOPost(MealBase):
+class MealDTOPost(MealBase):
     MealType: str
     FoodID: int
     Weight: int
