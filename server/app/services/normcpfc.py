@@ -31,3 +31,25 @@ class NormCPFCService:
         self.db.commit()
 
         return inserted
+
+    def edit_normcpfc(self, user_id: int, new_norm: NormCPFCDTO):
+
+        findedForUser = self.db.query(NormCPFC).filter(NormCPFC.UserID == user_id)
+
+        findedNorm = findedForUser.filter(NormCPFC.NormID == new_norm.NormID).first()
+
+        if not findedNorm:
+            raise ValueError
+
+        findedNorm.MinHeight=new_norm.MinHeight
+        findedNorm.MaxHeight=new_norm.MaxHeight
+        findedNorm.MinWeight=new_norm.MinWeight
+        findedNorm.MaxWeight=new_norm.MaxWeight
+        findedNorm.Calories=new_norm.Calories
+        findedNorm.Protein=new_norm.Protein
+        findedNorm.Fats=new_norm.Fats
+        findedNorm.Carbonatest=new_norm.Carbonatest
+
+        self.db.commit()
+
+        return findedNorm

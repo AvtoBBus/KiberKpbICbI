@@ -28,6 +28,20 @@ class UserService:
 
         return self.db.query(User).filter(User.UserID == finded.get("UserID")).first()
 
+    def edit_user(self, user_id: int, credentials: UserDTO):
+        findedUser = self.db.query(User).filter(User.UserID == user_id).first()
+        if not findedUser:
+            raise ValueError
+        
+        findedUser.Email = credentials.Email
+        findedUser.Phone = credentials.Phone
+
+        self.db.commit()
+
+        return findedUser
+
+        
+
     def login(self, credentials: Union[UserDTOLogin, User]) -> Token:
         security = Security(self.db)
         try:

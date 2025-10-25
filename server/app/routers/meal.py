@@ -101,6 +101,5 @@ def edit_meal(request: Request, new_meal: MealDTO, db: Session = Depends(get_db)
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Meal with id {new_meal.MealID} doesn't exist"
         )
-    
 
     return updated

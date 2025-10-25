@@ -26,3 +26,20 @@ class StatisticWHService:
         self.db.commit()
 
         return inserted
+    
+    def edit_statisticwh(self, user_id: int, new_statisticwh: StatisticWHDTO):
+
+        findedForUser = self.db.query(StatisticWH).filter(StatisticWH.UserID == user_id)
+
+        findedStat = findedForUser.filter(StatisticWH.StatisticWHID == new_statisticwh.StatisticWHID).first()
+
+        if not findedStat:
+            raise ValueError
+
+        findedStat.Date = new_statisticwh.Date
+        findedStat.Height = new_statisticwh.Height
+        findedStat.Weight = new_statisticwh.Weight
+
+        self.db.commit()
+
+        return findedStat

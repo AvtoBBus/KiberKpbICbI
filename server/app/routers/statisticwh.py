@@ -80,3 +80,26 @@ def add_statisticwh(request: Request, new_statisticwh: StatisticWHDTO, db: Sessi
         Height=inserted.Height,
         Weight=inserted.Weight
     )
+
+@router.put("/statisticwh", response_model=StatisticWHDTO)
+def edit_statisticwh(request: Request, new_statisticwh: StatisticWHDTO, db: Session = Depends(get_db)):
+    auth = UserService(db)
+    try:
+        token = request.cookies.get("token")
+        user = auth.get_user(token)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect token",
+        )
+    
+    service = StatisticWHService(db)
+    try:
+        updated = service.edit_statisticwh(user.UserID, new_statisticwh)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Statistic about WH with id {new_statisticwh.StatisticWHID} doesn't exist"
+        )
+    
+    return updated

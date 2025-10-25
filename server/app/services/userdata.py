@@ -26,3 +26,19 @@ class UserDataService:
         self.db.commit()
 
         return inserted
+    
+    def edit_userdata(self, user_id: int, new_userdata: UserDataDTO):
+        findedForUser = self.db.query(UserData).filter(UserData.UserID == user_id)
+
+        findedUData = findedForUser.filter(UserData.UserDataID == new_userdata.UserDataID).first()
+
+        if not findedUData:
+            raise ValueError
+
+        findedUData.Height = new_userdata.Height
+        findedUData.Weight = new_userdata.Weight
+        findedUData.Age = new_userdata.Age
+
+        self.db.commit()
+
+        return findedUData

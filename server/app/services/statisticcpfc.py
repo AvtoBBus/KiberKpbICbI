@@ -28,3 +28,22 @@ class StatisticCPFCService:
         self.db.commit()
 
         return inserted
+    
+    def edit_statisticcpfc(self, user_id: int, new_statisticcpfc: StatisticCPFCDTO):
+
+        findedForUser = self.db.query(StatisticCPFC).filter(StatisticCPFC.UserID == user_id)
+
+        findedStat = findedForUser.filter(StatisticCPFC.StatisticCPFCID == new_statisticcpfc.StatisticCPFCID).first()
+
+        if not findedStat:
+            raise ValueError
+
+        findedStat.Date = new_statisticcpfc.Date
+        findedStat.Calories = new_statisticcpfc.Calories
+        findedStat.Protein = new_statisticcpfc.Protein
+        findedStat.Fat = new_statisticcpfc.Fat
+        findedStat.Carbonates = new_statisticcpfc.Carbonates
+
+        self.db.commit()
+
+        return findedStat

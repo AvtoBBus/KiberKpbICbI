@@ -88,3 +88,27 @@ def add_statisticwh(request: Request, new_statisticcpfc: StatisticCPFCDTO, db: S
         Fat=inserted.Fat,
         Carbonates=inserted.Carbonates
     )
+
+@router.put("/statisticcpfc", response_model=StatisticCPFCDTO)
+def edit_statisticwh(request: Request, new_statisticcpfc: StatisticCPFCDTO, db: Session = Depends(get_db)):
+
+    auth = UserService(db)
+    try:
+        token = request.cookies.get("token")
+        user = auth.get_user(token)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect token",
+        )
+    
+    service = StatisticCPFCService(db)
+    try:
+        updated = service.edit_statisticcpfc(user.UserID, new_statisticcpfc)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Statistic about CPFC with id {new_statisticcpfc.StatisticCPFCID} doesn't exist"
+        )
+    
+    return updated

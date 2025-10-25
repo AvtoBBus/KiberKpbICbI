@@ -88,3 +88,27 @@ def add_userdata(request: Request, new_user_data: UserDataDTO, db: Session = Dep
         Age=inserted.Age,
     )
 
+@router.put("/userdata", response_model=UserDataDTO)
+def edit_userdata(request: Request, new_user_data: UserDataDTO, db: Session = Depends(get_db)):
+        
+    auth = UserService(db)
+    try:
+        token = request.cookies.get("token")
+        user = auth.get_user(token)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect token",
+        )
+    
+    service = UserDataService(db)
+    try:
+        updated = service.edit_userdata(user.UserID, new_user_data)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User data with id {new_user_data.UserDataID} doesn't exist"
+        )
+    
+    return updated
+

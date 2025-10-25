@@ -58,6 +58,40 @@ def login(
 
     return user
 
+@router.put("/edit", response_model=UserDTO)
+def edit(
+    credentials: UserDTO,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    
+    auth = UserService(db)
+    try:
+        token = request.cookies.get("token")
+        user = auth.get_user(token)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect token",
+        )
+    
+    if credentials.UserID != user.UserID:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Incorrect UserID"
+        )
+
+    service = UserService(db)
+    try:
+        newUser = service.edit_user(user.UserID, credentials)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User with this email or username already exist",
+        )
+    
+    return newUser
+
 
 @router.post("/auth", response_model=UserDTO)
 def auth(

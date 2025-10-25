@@ -96,3 +96,27 @@ def add_normcpfc(request: Request, new_norm: NormCPFCDTO, db: Session = Depends(
         Fats=inserted.Fats,
         Carbonatest=inserted.Carbonatest,
     )
+
+@router.put("/normcpfc", response_model=NormCPFCDTO)
+def edit_normcpfc(request: Request, new_norm: NormCPFCDTO, db: Session = Depends(get_db)):
+    auth = UserService(db)
+    try:
+        token = request.cookies.get("token")
+        user = auth.get_user(token)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect token",
+        )
+
+    service = NormCPFCService(db)
+
+    try:
+        updated = service.edit_normcpfc(user.UserID, new_norm)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Norm with id {new_norm.NormID} doesn't exist"
+        )
+    
+    return updated
