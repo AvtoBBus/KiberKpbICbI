@@ -79,7 +79,6 @@ class MealService:
 
             for i in range(len(findedFIMs) - 1, count - 1, -1):
                 self.db.delete(findedFIMs[i])
-
         else:
             count = 0
             for i in range(len(findedFIMs)):
