@@ -16,3 +16,4 @@ class Meal(Base):
     MealType: Mapped[MealTypeEnum] = mapped_column(Enum(*get_args(MealTypeEnum)))
 
     UserID: Mapped[int] = mapped_column(ForeignKey("user.UserID"))
+    FoodInMeals: Mapped[list["FoodInMeal"]] = relationship(back_populates="Meal")    

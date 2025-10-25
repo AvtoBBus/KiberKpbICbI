@@ -6,14 +6,16 @@ class Food(Base):
     __tablename__ = "food"
     
     FoodID: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    FoodInMeals: Mapped["FoodInMeal"] = relationship(back_populates="Food")
+    
     Name: Mapped[str] = mapped_column(String)
-    CategoryID: Mapped[int] = mapped_column(ForeignKey("foodcategories.CategoryID"))
-    Category: Mapped["FoodCategory"] = relationship(back_populates="Food")
     Calories: Mapped[int] = mapped_column(Integer)
     Protein: Mapped[int] = mapped_column(Integer)
     Fats: Mapped[int] = mapped_column(Integer)
     Carbonates: Mapped[int] = mapped_column(Integer)
 
+    CategoryID: Mapped[int] = mapped_column(ForeignKey("foodcategories.CategoryID"))
+    Category: Mapped["FoodCategory"] = relationship(back_populates="Food")
 
 class FoodCategory(Base):
     __tablename__ = "foodcategories"

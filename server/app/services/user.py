@@ -44,6 +44,7 @@ class UserService:
 
     def login(self, credentials: Union[UserDTOLogin, User]) -> Token:
         security = Security(self.db)
+
         try:
             token = security.login_for_access_token(
                 email=credentials.Email, password=credentials.Password)

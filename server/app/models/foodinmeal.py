@@ -12,4 +12,7 @@ class FoodInMeal(Base):
     Weight: Mapped[int] = mapped_column(Integer)
 
     FoodID: Mapped[int] = mapped_column(ForeignKey("food.FoodID"))
+    Food: Mapped[list["Food"]] = relationship(back_populates="FoodInMeals")
+
     MealID: Mapped[int] = mapped_column(ForeignKey("meal.MealID"))
+    Meal: Mapped[list["Meal"]] = relationship(back_populates="FoodInMeals")

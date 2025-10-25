@@ -58,6 +58,7 @@ class Security:
         )
 
     def validate_user(self, email: str, password: str) -> Union[UserDTO, bool]:
+
         finded = self.db.query(User).filter(User.Email == email).first()
 
         user: UserDTO = UserDTO(
