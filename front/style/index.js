@@ -7,4 +7,9 @@ export const mainStyle = StyleSheet.create({
   title: {
     fontFamily: "extra-bold",
   },
+  h1: {
+    fontFamily: "regular",
+    fontSize: 24,
+    lineHeight: "110%",
+  },
 });
