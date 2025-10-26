@@ -9,15 +9,16 @@ import UserView from "../views/UserView";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { router } from "./routerRef";
 
 const Stack = createStackNavigator();
 
 export default function Router() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeView} />
+    <NavigationContainer ref={router}>
+      <Stack.Navigator initialRouteName="Authorization">
         <Stack.Screen name="Authorization" component={AuthorizationView} />
+        <Stack.Screen name="Home" component={HomeView} />
         <Stack.Screen name="Loading" component={LoadingView} />
         <Stack.Screen name="Registration" component={RegistrationView} />
         <Stack.Screen name="Result" component={ResultView} />
