@@ -4,14 +4,14 @@ export const mainStyle = StyleSheet.create({
   h1: {
     // fontFamily: "regular",
     fontSize: 24,
-    lineHeight: 110,
+    // lineHeight: "110%",
     color: "black",
     textAlign: "center",
   },
   p_input: {
     // fontFamily: "regular",
     fontSize: 16,
-    lineHeight: 120,
+    // lineHeight: "120%",
     color: "black",
     textAlign: "left",
     textAlignVertical: "center",
@@ -19,7 +19,7 @@ export const mainStyle = StyleSheet.create({
   p_light: {
     fontWeight: 300,
     fontSize: 12,
-    // lineHeight: 125,
+    // lineHeight: "125%",
     textAlign: "left",
     textAlignVertical: "center",
   },

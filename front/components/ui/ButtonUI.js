@@ -47,12 +47,12 @@ const styles = StyleSheet.create({
 
   textGreen: {
     color: "white",
-    fontWeight: "600",
+    // fontWeight: "600",
     fontSize: 16,
   },
   textGreenPress: {
     color: "#A5D66D",
-    fontWeight: "600",
+    // fontWeight: "600",
     fontSize: 16,
   },
 
@@ -65,12 +65,12 @@ const styles = StyleSheet.create({
 
   textGray: {
     color: "#A5D66D",
-    fontWeight: "600",
+    // fontWeight: "600",
     fontSize: 16,
   },
   textGrayPress: {
     color: "white",
-    fontWeight: "600",
+    // fontWeight: "600",
     fontSize: 16,
   },
 
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     fontWeight: 300,
     textAlign: "center",
     fontSize: 18,
-    lineHeight: 125,
+    // lineHeight: 125,
     textAlign: "center",
     textAlignVertical: "center",
   },
