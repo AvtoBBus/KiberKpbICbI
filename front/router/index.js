@@ -16,7 +16,10 @@ const Stack = createStackNavigator();
 export default function Router() {
   return (
     <NavigationContainer ref={router}>
-      <Stack.Navigator initialRouteName="Authorization">
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName="Authorization"
+      >
         <Stack.Screen name="Authorization" component={AuthorizationView} />
         <Stack.Screen name="Home" component={HomeView} />
         <Stack.Screen name="Loading" component={LoadingView} />
