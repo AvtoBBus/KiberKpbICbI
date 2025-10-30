@@ -23,7 +23,13 @@ export default function Router() {
         <Stack.Screen name="User" component={UserView} />
         <Stack.Screen name="Authorization" component={AuthorizationView} />
         <Stack.Screen name="Home" component={HomeView} />
-        <Stack.Screen name="Loading" component={LoadingView} />
+        <Stack.Screen
+          name="Loading"
+          component={LoadingView}
+          options={{
+            animation: "none",
+          }}
+        />
         <Stack.Screen name="Registration" component={RegistrationView} />
         <Stack.Screen name="Result" component={ResultView} />
         <Stack.Screen name="Statistic" component={StatisticView} />
