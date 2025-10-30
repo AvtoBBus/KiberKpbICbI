@@ -27,6 +27,13 @@ export const mainStyle = StyleSheet.create({
     textAlign: "left",
     textAlignVertical: "center",
   },
+  p: {
+    fontWeight: 300,
+    fontSize: 16,
+    // lineHeight: "125%",
+    textAlign: "left",
+    textAlignVertical: "center",
+  },
   whiteCard: {
     backgroundColor: "white",
     height: "100%",
