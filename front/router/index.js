@@ -18,15 +18,15 @@ export default function Router() {
     <NavigationContainer ref={router}>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
-        initialRouteName="Authorization"
+        initialRouteName="User"
       >
+        <Stack.Screen name="User" component={UserView} />
         <Stack.Screen name="Authorization" component={AuthorizationView} />
         <Stack.Screen name="Home" component={HomeView} />
         <Stack.Screen name="Loading" component={LoadingView} />
         <Stack.Screen name="Registration" component={RegistrationView} />
         <Stack.Screen name="Result" component={ResultView} />
         <Stack.Screen name="Statistic" component={StatisticView} />
-        <Stack.Screen name="User" component={UserView} />
       </Stack.Navigator>
     </NavigationContainer>
   );

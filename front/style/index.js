@@ -1,6 +1,10 @@
 import { StyleSheet } from "react-native";
 
 export const mainStyle = StyleSheet.create({
+  main_footer: {
+    position: "static",
+    bottom: 0,
+  },
   h1: {
     // fontFamily: "regular",
     fontSize: 24,
