@@ -1,6 +1,10 @@
 import { StyleSheet } from "react-native";
 
 export const mainStyle = StyleSheet.create({
+  main_footer: {
+    position: "static",
+    bottom: 0,
+  },
   h1: {
     // fontFamily: "regular",
     fontSize: 24,
@@ -19,6 +23,13 @@ export const mainStyle = StyleSheet.create({
   p_light: {
     fontWeight: 300,
     fontSize: 12,
+    // lineHeight: "125%",
+    textAlign: "left",
+    textAlignVertical: "center",
+  },
+  p: {
+    fontWeight: 300,
+    fontSize: 16,
     // lineHeight: "125%",
     textAlign: "left",
     textAlignVertical: "center",
