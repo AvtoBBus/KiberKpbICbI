@@ -40,8 +40,6 @@ class UserService:
 
         return findedUser
 
-        
-
     def login(self, credentials: Union[UserDTOLogin, User]) -> Token:
         security = Security(self.db)
 
@@ -53,6 +51,17 @@ class UserService:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect email or password",
                 headers={"WWW-Authenticate": "Bearer"},
+            )
+        return token
+
+    def refresh(self, access_token: str, refresh_token: str):
+        security = Security(self.db)
+        try:
+            token = security.refresh_token(access_token, refresh_token)
+        except:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Invalid token"
             )
         return token
 

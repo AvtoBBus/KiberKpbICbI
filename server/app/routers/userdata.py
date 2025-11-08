@@ -1,22 +1,35 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
-from typing import List
 
 from app.schemas.userdata import UserDataDTO, UserDataDTO
 from app.utils.db import get_db
 from app.services.userdata import UserDataService
 from app.services.user import UserService
+from app.utils.security import Security
+
+from typing import List, Annotated
 
 router = APIRouter()
+oauth2_scheme = APIKeyHeader(name="token")
 
 
 @router.get("/userdata", response_model=List[UserDataDTO])
-def get_userdata(request: Request, db: Session = Depends(get_db)):
+def get_userdata(
+    token: Annotated[str, Depends(oauth2_scheme)], 
+    db: Session = Depends(get_db)
+):
 
     auth = UserService(db)
+    security = Security(db)
+
     try:
-        token = request.cookies.get("token")
         user = auth.get_user(token)
+        if not security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect token",
+            )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -37,12 +50,22 @@ def get_userdata(request: Request, db: Session = Depends(get_db)):
 
 
 @router.get("/userdata/{user_data_id}", response_model=UserDataDTO)
-def get_userdata_id(request: Request, user_data_id: int, db: Session = Depends(get_db)):
+def get_userdata_id(
+    user_data_id: int,
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: Session = Depends(get_db)
+):
     
     auth = UserService(db)
+    security = Security(db)
+
     try:
-        token = request.cookies.get("token")
         user = auth.get_user(token)
+        if not security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect token",
+            )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -67,12 +90,22 @@ def get_userdata_id(request: Request, user_data_id: int, db: Session = Depends(g
 
 
 @router.post("/userdata", response_model=UserDataDTO)
-def add_userdata(request: Request, new_user_data: UserDataDTO, db: Session = Depends(get_db)):
+def add_userdata(
+    new_user_data: UserDataDTO,
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: Session = Depends(get_db)
+):
         
     auth = UserService(db)
+    security = Security(db)
+
     try:
-        token = request.cookies.get("token")
         user = auth.get_user(token)
+        if not security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect token",
+            )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -89,12 +122,21 @@ def add_userdata(request: Request, new_user_data: UserDataDTO, db: Session = Dep
     )
 
 @router.put("/userdata", response_model=UserDataDTO)
-def edit_userdata(request: Request, new_user_data: UserDataDTO, db: Session = Depends(get_db)):
-        
+def edit_userdata(
+    new_user_data: UserDataDTO,
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: Session = Depends(get_db)
+):
     auth = UserService(db)
+    security = Security(db)
+
     try:
-        token = request.cookies.get("token")
         user = auth.get_user(token)
+        if not security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect token",
+            )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

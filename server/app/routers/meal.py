@@ -1,25 +1,38 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request,Response
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
+from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Annotated
 
 from app.schemas.meal import MealDTO, MealDTOPost, MealDTOPut
 from app.utils.db import get_db
+from app.utils.security import Security
 from app.services.meal import MealService
 from app.services.user import UserService
 
 from app.utils.mealtype import MealTypeEnum
 
+
 router = APIRouter()
+oauth2_scheme = APIKeyHeader(name="token")
 
 BASE_STR = "/meal"
 
-@router.get(BASE_STR + "/", response_model=List[MealDTO])
-def get_meal(request: Request, db: Session = Depends(get_db)):
+@router.get(BASE_STR, response_model=List[MealDTO])
+def get_meal(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: Session = Depends(get_db)
+):
     
     auth = UserService(db)
+    security = Security(db)
+
     try:
-        token = request.cookies.get("token")
         user = auth.get_user(token)
+        if not security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect token",
+            )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -50,12 +63,22 @@ def get_meal(request: Request, db: Session = Depends(get_db)):
     ]
 
 @router.get(BASE_STR + "/{meal_id}", response_model=MealDTO)
-def get_meal(request: Request, meal_id: int, db: Session = Depends(get_db)):
+def get_meal(
+    meal_id: int,
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: Session = Depends(get_db)
+):
 
     auth = UserService(db)
+    security = Security(db)
+
     try:
-        token = request.cookies.get("token")
         user = auth.get_user(token)
+        if not security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect token",
+            )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -90,12 +113,20 @@ def get_meal(request: Request, meal_id: int, db: Session = Depends(get_db)):
             ]
         )
 
-@router.post(BASE_STR + "/", response_model=MealDTO)
-def add_meal(request: Request, new_meal: MealDTOPost, db: Session = Depends(get_db)):
+@router.post(BASE_STR, response_model=MealDTO)
+def add_meal(
+    new_meal: MealDTOPost,
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: Session = Depends(get_db)
+):
     auth = UserService(db)
     try:
-        token = request.cookies.get("token")
         user = auth.get_user(token)
+        if not security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect token",
+            )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -135,12 +166,22 @@ def add_meal(request: Request, new_meal: MealDTOPost, db: Session = Depends(get_
             ]
         )
 
-@router.put(BASE_STR + "/", response_model=MealDTO)
-def edit_meal(request: Request, new_meal: MealDTOPut, db: Session = Depends(get_db)):
+@router.put(BASE_STR, response_model=MealDTO)
+def edit_meal(
+    new_meal: MealDTOPut,
+    token: Annotated[str, Depends(oauth2_scheme)], 
+    db: Session = Depends(get_db)
+):
     auth = UserService(db)
+    security = Security(db)
+
     try:
-        token = request.cookies.get("token")
         user = auth.get_user(token)
+        if not security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect token",
+            )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -175,11 +216,22 @@ def edit_meal(request: Request, new_meal: MealDTOPut, db: Session = Depends(get_
         )
 
 @router.delete(BASE_STR + "/{meal_id}")
-def delete_meal(request: Request, response: Response, meal_id: int, db: Session = Depends(get_db)):
+def delete_meal(
+    response: Response,
+    meal_id: int,
+    token: Annotated[str, Depends(oauth2_scheme)], 
+    db: Session = Depends(get_db)
+):
     auth = UserService(db)
+    security = Security(db)
+
     try:
-        token = request.cookies.get("token")
         user = auth.get_user(token)
+        if not security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect token",
+            )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

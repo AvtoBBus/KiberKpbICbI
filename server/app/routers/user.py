@@ -1,20 +1,36 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
+from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
 
 from app.schemas.user import UserDTO, UserDTOLogin, UserDTOAuth
-from app.utils.db import get_db
+from app.schemas.token import Token, TokenRefreshDTO
 from app.services.user import UserService
+from app.utils.security import Security
+from app.utils.db import get_db
 from app.config import config
+
+from typing import Annotated
 
 router = APIRouter()
 
+oauth2_scheme = APIKeyHeader(name="token")
+
 
 @router.get("/user", response_model=UserDTO)
-def get_user(request: Request, db: Session = Depends(get_db)):
+def get_user(
+    token: Annotated[str, Depends(oauth2_scheme)], 
+    db: Session = Depends(get_db)
+):
     service = UserService(db)
+    security = Security(db)
+    
     try:
-        token = request.cookies.get("token")
         user = service.get_user(token)
+        if not security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect token",
+            )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -29,10 +45,9 @@ def get_user(request: Request, db: Session = Depends(get_db)):
     )
 
 
-@router.post("/login", response_model=UserDTO)
+@router.post("/login", response_model=Token)
 def login(
     credentials: UserDTOLogin,
-    response: Response,
     db: Session = Depends(get_db)
 ):
     service = UserService(db)
@@ -45,30 +60,25 @@ def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    user = service.get_user(token.access_token)
-
-    response.set_cookie(
-        key="token",
-        value=token.access_token,
-        max_age=config.settings.ACCESS_TOKEN_EXPIRE_MINUTES,
-        domain="localhost",
-        samesite="strict",
-        httponly=True
-    )
-
-    return user
+    return token
 
 @router.put("/edit", response_model=UserDTO)
 def edit(
     credentials: UserDTO,
-    request: Request,
+    token: Annotated[str, Depends(oauth2_scheme)],
     db: Session = Depends(get_db)
 ):
     
     auth = UserService(db)
+    security = Security(db)
+
     try:
-        token = request.cookies.get("token")
         user = auth.get_user(token)
+        if not security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect token",
+            )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -93,10 +103,9 @@ def edit(
     return newUser
 
 
-@router.post("/auth", response_model=UserDTO)
+@router.post("/auth", response_model=Token)
 def auth(
     credentials: UserDTOAuth,
-    response: Response,
     db: Session = Depends(get_db)
 ):
     service = UserService(db)
@@ -110,21 +119,22 @@ def auth(
 
     token = service.login(credentials)
 
-    response.set_cookie(
-        key="token",
-        value=token.access_token,
-        max_age=config.settings.ACCESS_TOKEN_EXPIRE_MINUTES,
-        domain="localhost",
-        samesite="strict",
-        httponly=True
-    )
+    return token
 
-    return newUser
+@router.post("/refresh", response_model=Token)
+def refresh(
+    refresh_token: TokenRefreshDTO,
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: Session = Depends(get_db)
+):
+    service = UserService(db)
+    try:
+        token = service.refresh(token, refresh_token.refresh_token)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid token",
+        )
 
-
-@router.get("/logout")
-def logout(response: Response):
-    response.delete_cookie(key="token")
-    return None
-
+    return token
 

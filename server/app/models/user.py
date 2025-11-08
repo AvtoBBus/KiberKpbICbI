@@ -13,3 +13,5 @@ class User(Base):
     Password: Mapped[str] = mapped_column(String)
     Email: Mapped[str] = mapped_column(String)
     Phone: Mapped[Optional[str]] = mapped_column(default=None)
+    AccessToken: Mapped[str] = mapped_column(String)
+    RefreshToken: Mapped[str] = mapped_column(String)
