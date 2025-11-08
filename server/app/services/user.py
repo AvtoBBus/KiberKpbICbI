@@ -90,3 +90,17 @@ class UserService:
         self.db.commit()
 
         return newUser
+
+    def logout(self, user: UserDTO):
+        findedUser = self.db.query(User).filter(User.UserID == user.UserID).first()
+        
+        if not findedUser:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN
+            )
+        
+        findedUser.AccessToken = None
+        findedUser.RefreshToken = None
+        self.db.commit()
+
+        return None

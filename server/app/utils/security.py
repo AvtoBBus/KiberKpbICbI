@@ -29,7 +29,6 @@ class Security:
 
     def check_user_token(self, token: str, userID: int) -> bool:
         findedUser = self.db.query(User).filter(User.UserID == userID).first()
-        print(findedUser.AccessToken)
         return findedUser.AccessToken.__eq__(token)
 
     def decode_token(self, token: str) -> UserDTO:

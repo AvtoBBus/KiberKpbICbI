@@ -121,6 +121,35 @@ def auth(
 
     return token
 
+@router.get("/logout")
+def logout(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    response: Response,
+    db: Session = Depends(get_db)
+):
+    auth = UserService(db)
+    security = Security(db)
+
+    try:
+        user = auth.get_user(token)
+        if not security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect token",
+            )
+        
+        auth.logout(user)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid token"
+        )
+
+
+    response.status_code = status.HTTP_204_NO_CONTENT
+
+    return None
+
 @router.post("/refresh", response_model=Token)
 def refresh(
     refresh_token: TokenRefreshDTO,
