@@ -44,6 +44,9 @@ def get_userdata(
             UserDataID=userData.UserDataID,
             Height=userData.Height,
             Weight=userData.Weight,
+            DesiredHeight=userData.DesiredHeight,
+            DesiredWeight=userData.DesiredWeight,
+            Activity=userData.Activity,
             Age=userData.Age,
         ) for userData in data
     ]
@@ -85,6 +88,9 @@ def get_userdata_id(
         UserDataID=userData.UserDataID,
         Height=userData.Height,
         Weight=userData.Weight,
+        DesiredHeight=userData.DesiredHeight,
+        DesiredWeight=userData.DesiredWeight,
+        Activity=userData.Activity,
         Age=userData.Age,
     )
 
@@ -118,6 +124,9 @@ def add_userdata(
         UserDataID=inserted.UserDataID,
         Height=inserted.Height,
         Weight=inserted.Weight,
+        DesiredHeight=inserted.DesiredHeight,
+        DesiredWeight=inserted.DesiredWeight,
+        Activity=inserted.Activity,
         Age=inserted.Age,
     )
 

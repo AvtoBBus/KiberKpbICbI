@@ -7,4 +7,7 @@ class UserDataBase(BaseModel):
 class UserDataDTO(UserDataBase):
     Height: int
     Weight: int
+    DesiredHeight: int
+    DesiredWeight: int
+    Activity: int
     Age:int

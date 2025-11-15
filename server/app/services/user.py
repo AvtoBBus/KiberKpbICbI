@@ -67,23 +67,20 @@ class UserService:
 
     def auth(self, credentials: UserDTOAuth):
 
-        tryFindUser = self.db.query(User).filter(or_(
-            User.UserName == credentials.UserName,
-            User.Email == credentials.Email
-        )).first()
+        tryFindUser = self.db.query(User).filter(User.Email == credentials.Email).first()
 
         if tryFindUser:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User with this email or username already exist",
+                detail="User with this email already exist",
             )
 
         newUser = User(
-            UserName=credentials.UserName,
+            UserName=credentials.Email,
             Salt=hashlib.sha256(b"change me pls").hexdigest(),
             Password=hashlib.sha256(credentials.Password.encode()).hexdigest(),
             Email=credentials.Email,
-            Phone=credentials.Phone
+            Phone=None
         )
 
         self.db.add(newUser)

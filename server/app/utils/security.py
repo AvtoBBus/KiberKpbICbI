@@ -8,7 +8,7 @@ import jwt
 import hashlib
 
 from app.config import config
-from app.schemas.user import UserDTO, UserDTOAuth
+from app.schemas.user import UserDTO
 from app.schemas.token import Token
 from app.utils.db import get_db
 from app.models.user import User

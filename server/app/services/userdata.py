@@ -18,8 +18,11 @@ class UserDataService:
         inserted = UserData(
             Height = new_userdata.Height,
             Weight = new_userdata.Weight,
+            DesiredHeight = new_userdata.DesiredHeight,
+            DesiredWeight = new_userdata.DesiredWeight,
+            Activity  = new_userdata.Activity,
             Age = new_userdata.Age,
-            UserID= user_id
+            UserID = user_id
         )
 
         self.db.add(inserted)
@@ -37,6 +40,9 @@ class UserDataService:
 
         findedUData.Height = new_userdata.Height
         findedUData.Weight = new_userdata.Weight
+        findedUData.DesiredHeight = new_userdata.DesiredHeight
+        findedUData.DesiredWeight = new_userdata.DesiredWeight
+        findedUData.Activity = new_userdata.Activity
         findedUData.Age = new_userdata.Age
 
         self.db.commit()

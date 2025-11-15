@@ -8,6 +8,9 @@ class UserData(Base):
     UserDataID: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     Height: Mapped[int] = mapped_column(Integer)
     Weight: Mapped[int] = mapped_column(Integer)
+    DesiredHeight: Mapped[int] = mapped_column(Integer)
+    DesiredWeight: Mapped[int] = mapped_column(Integer)
+    Activity: Mapped[int] = mapped_column(Integer)
     Age: Mapped[int] = mapped_column(Integer)
     
     UserID: Mapped[int] = mapped_column(ForeignKey("user.UserID"))
