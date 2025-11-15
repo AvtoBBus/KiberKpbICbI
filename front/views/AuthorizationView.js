@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { AuthAPI } from "../api/api.js";
 
 import { mainStyle } from "../style";
 import { stylesAuth } from "../style/auto.js";
@@ -13,6 +14,19 @@ export default function AuthorizationView({ navigation }) {
   const [password, setPassword] = useState("");
   const [secure, setSecure] = useState(true);
   const [focusedField, setFocusedField] = useState(null);
+
+  const handleLogin = async () => {
+    try {
+      const res = await AuthAPI.login(email.trim(), password);
+      // console.log("Успешный вход:", res);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Home" }],
+      });
+    } catch (err) {
+      console.log("Ошибка входа:", err.response?.data || err.message);
+    }
+  };
 
   return (
     <View style={stylesAuth.container}>
@@ -41,7 +55,12 @@ export default function AuthorizationView({ navigation }) {
           isFocused={focusedField === "password"}
         />
         <Text style={[styles.text, mainStyle.p_light]}>Забыли пароль?</Text>
-        <ButtonUI style={stylesAuth.button} title={"Войти"} green={true} />
+        <ButtonUI
+          style={stylesAuth.button}
+          title={"Войти"}
+          green={true}
+          onPress={handleLogin}
+        />
         <ButtonUI
           title={"Создать аккаунт"}
           gray={true}

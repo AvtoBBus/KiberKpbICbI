@@ -2,13 +2,14 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { router } from "../router/routerRef";
 
-const API_URL = "#";
+const API_URL = "https://v30rkkm9-8000.euw.devtunnels.ms/api";
 
 const api = axios.create({
   baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
   },
+  timeout: 20_000,
 });
 
 api.interceptors.request.use(async (config) => {
@@ -31,14 +32,14 @@ api.interceptors.response.use(
 
       if (refreshToken) {
         try {
-          const { data } = await axios.post(`${API_URL}/auth/refresh`, {
+          const { data } = await axios.post(`${API_URL}/user/data/refresh`, {
             refreshToken,
-          }); // уточнить потом у вовы запрос
+          });
 
-          await SecureStore.setItemAsync("accessToken", data.accessToken);
+          await SecureStore.setItemAsync("accessToken", data.access_token);
 
-          originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
-          return apiClient(originalRequest);
+          originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
+          return api(originalRequest);
         } catch (refreshError) {
           console.warn("Срок действия токена истек");
         }

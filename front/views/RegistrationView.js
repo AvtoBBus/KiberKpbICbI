@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { AuthAPI } from "../api/api.js";
 
 import { mainStyle } from "../style";
 import { stylesAuth } from "../style/auto.js";
@@ -13,6 +14,19 @@ export default function RegistrationView({ navigation }) {
   const [password, setPassword] = useState("");
   const [secure, setSecure] = useState(true);
   const [focusedField, setFocusedField] = useState(null);
+
+  const handleLogin = async () => {
+    try {
+      const res = await AuthAPI.registration(email.trim(), password);
+      // console.log("Успешный вход:", res);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Home" }],
+      });
+    } catch (err) {
+      console.log("Ошибка входа:", err.response?.data || err.message);
+    }
+  };
 
   return (
     <View style={stylesAuth.container}>
@@ -55,6 +69,7 @@ export default function RegistrationView({ navigation }) {
           style={stylesAuth.button}
           title={"Регистрация"}
           green={true}
+          onPress={handleLogin}
         />
         <ButtonUI
           title={"Уже есть аккаунт?"}

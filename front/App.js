@@ -8,7 +8,7 @@ import Router from "./router";
 // SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  const [fontsLoaded] = useFonts(FONT_MAP);
+  // const [fontsLoaded] = useFonts(FONT_MAP);
 
   // const onLayoutRootView = useCallback(async () => {
   //   if (fontsLoaded) {
@@ -16,7 +16,8 @@ export default function App() {
   //   }
   // }, [fontsLoaded]);
 
-  if (!fontsLoaded) {
-    return <Text>Загрузка, которую потом сделаем</Text>;
-  } else return <Router />;
+  // if (!fontsLoaded) {
+  //   return <Text>Загрузка, которую потом сделаем</Text>;
+  // } else
+  return <Router />;
 }
