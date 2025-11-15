@@ -1,19 +1,21 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.food import Food
 from app.schemas.food import FoodDTOPost
+from sqlalchemy import Select
 # from app.core.security import get_password_hash
 
 class FoodService:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
        
-    def get_food_id(self, food_id: int):
+    async def get_food_id(self, food_id: int):
         return self.db.query(Food).filter(Food.FoodID == food_id).first()
     
-    def get_food(self):
-        return self.db.query(Food).all()
+    async def get_food(self):
+        async with self.db as session:
+            return await session.execute(Select(Food))
 
-    def add_food(self, new_food: FoodDTOPost):
+    async def add_food(self, new_food: FoodDTOPost):
 
         inserted = Food(
             Name=new_food.Name,
@@ -24,7 +26,7 @@ class FoodService:
             Carbonates=new_food.Carbonates
         )
 
-        self.db.add(inserted)
-        self.db.commit()
+        await self.db.add(inserted)
+        await self.db.commit()
 
         return inserted
