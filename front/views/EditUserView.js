@@ -5,7 +5,12 @@ import { mainStyle } from "../style";
 import { API } from "../api/api.js";
 import InputUI from "../components/ui/InputUI";
 import ButtonUI from "../components/ui/ButtonUI";
+import DropdownUI from "../components/ui/DropdownUI.js";
 import BackImg from "../assets/img/back.svg";
+import { ACTIVITY } from "../utils/constants";
+import { mapToOptions } from "../utils/functions.js";
+
+const activityOptions = mapToOptions(ACTIVITY);
 
 export default function EditUserView({ route, navigation }) {
   const { Userdata } = route.params ?? {};
@@ -20,7 +25,7 @@ export default function EditUserView({ route, navigation }) {
     Weight: String(Userdata?.Weight ?? ""),
     DesiredWeight: String(Userdata?.DesiredWeight ?? ""),
     DesiredHeight: String(Userdata?.DesiredHeight ?? ""),
-    Activity: String(Userdata?.Activity ?? ""),
+    Activity: Userdata?.Activity ?? null,
     UserDataID: Userdata?.UserDataID ?? 0,
   });
 
@@ -69,6 +74,14 @@ export default function EditUserView({ route, navigation }) {
           <Text style={mainStyle.h1}>Настройки профиля</Text>
         </View>
         <View style={[mainStyle.white_bloc, styles.inputPadding]}>
+          <DropdownUI
+            options={mapToOptions(ACTIVITY)}
+            value={formData.Activity}
+            label="Активность"
+            onSelect={(v) => handleChange("Activity", v)}
+            placeholder="Выберите активность"
+            style={styles.inputWight}
+          />
           <InputUI
             value={formData.UserName}
             placeholder="Имя"
@@ -135,7 +148,7 @@ export default function EditUserView({ route, navigation }) {
             isFocused={focusedField === "DesiredHeight"}
             style={styles.inputWight}
           />
-          <InputUI
+          {/* <InputUI
             value={formData.Activity}
             placeholder="Активность"
             required
@@ -144,7 +157,7 @@ export default function EditUserView({ route, navigation }) {
             onFocus={() => setFocusedField("Activity")}
             onBlur={() => setFocusedField(null)}
             isFocused={focusedField === "Activity"}
-          />
+          /> */}
 
           <ButtonUI
             title={"Сохранить"}

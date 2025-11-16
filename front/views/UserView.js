@@ -6,6 +6,7 @@ import FooterBloc from "../components/bloc/FooterBloc";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API } from "../api/api.js";
 import { useFocusEffect } from "@react-navigation/native";
+import { ACTIVITY } from "../utils/constants";
 
 export default function UserView({ navigation }) {
   const [userData, setUserData] = useState(null);
@@ -47,7 +48,7 @@ export default function UserView({ navigation }) {
             <View style={[styles.userName, styles.p_table]}>
               {/* <Text style={mainStyle.p}>Иван</Text>
               <Text style={mainStyle.p}>Иванович</Text> */}
-              <Text style={[mainStyle.p]}>{userData?.Age ?? "-"}</Text>
+              <Text style={[mainStyle.p]}>{userData?.UserName ?? "-"}</Text>
             </View>
           </View>
 
@@ -79,7 +80,7 @@ export default function UserView({ navigation }) {
             <View style={styles.infoRow}>
               <Text style={[mainStyle.p, styles.p_table]}>Активность:</Text>
               <Text style={[mainStyle.p, styles.p_table]}>
-                {userData?.Activity ?? "-"}
+                {ACTIVITY[userData?.Activity] ?? "-"}
               </Text>
             </View>
           </View>
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     // justifyContent: "space-between",
     marginBottom: 12,
-    width: 264,
+    width: 270,
   },
   p_table: {
     flex: 1,
