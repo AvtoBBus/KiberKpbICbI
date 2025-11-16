@@ -21,7 +21,7 @@ export default function AuthorizationView({ navigation }) {
       // console.log("Успешный вход:", res);
       navigation.reset({
         index: 0,
-        routes: [{ name: "Home" }],
+        routes: [{ name: "User" }],
       });
     } catch (err) {
       console.log("Ошибка входа:", err.response?.data || err.message);

@@ -6,4 +6,4 @@ export default function ResultView({ navigation }) {
   return <View></View>;
 }
 
-const style = StyleSheet.create({});
+const styles = StyleSheet.create({});

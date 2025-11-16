@@ -58,4 +58,32 @@ export const mainStyle = StyleSheet.create({
   inputContainerFocus: {
     borderColor: "#F7B31F",
   },
+  main_bloc: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "start",
+    alignItems: "center",
+  },
+  start_bloc: {
+    width: 334,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+    marginTop: 20,
+  },
+  white_bloc: {
+    backgroundColor: "white",
+    width: 334,
+    // height: 263,
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingRight: 20,
+    paddingRight: 20,
+    flexDirection: "column",
+    justifyContent: "start",
+    alignItems: "center",
+    borderRadius: 10,
+    gap: 10,
+  },
 });

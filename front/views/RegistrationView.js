@@ -21,7 +21,7 @@ export default function RegistrationView({ navigation }) {
       // console.log("Успешный вход:", res);
       navigation.reset({
         index: 0,
-        routes: [{ name: "Home" }],
+        routes: [{ name: "EditUser" }],
       });
     } catch (err) {
       console.log("Ошибка входа:", err.response?.data || err.message);
