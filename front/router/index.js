@@ -6,6 +6,7 @@ import RegistrationView from "../views/RegistrationView";
 import ResultView from "../views/ResultView";
 import StatisticView from "../views/StatisticView";
 import UserView from "../views/UserView";
+import EditUserView from "../views/EditUserView";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -22,6 +23,7 @@ export default function Router() {
       >
         <Stack.Screen name="Authorization" component={AuthorizationView} />
         <Stack.Screen name="User" component={UserView} />
+        <Stack.Screen name="EditUser" component={EditUserView} />
         <Stack.Screen name="Loading" component={LoadingView} />
         <Stack.Screen name="Home" component={HomeView} />
         <Stack.Screen name="Registration" component={RegistrationView} />
