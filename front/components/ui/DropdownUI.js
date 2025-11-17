@@ -9,8 +9,11 @@ export default function DropdownUI({
   onSelect,
   label = "Выберите значение",
   placeholder = "Выберите значение",
+  required = false,
   style,
 }) {
+  const isEmpty =
+    required && (value === null || value === undefined || value === "");
   return (
     <View style={[styles.container, style]}>
       <Text style={mainStyle.p}>{label}</Text>
@@ -18,13 +21,17 @@ export default function DropdownUI({
         data={options}
         labelField="label"
         valueField="value"
-        placeholder={placeholder}
-        placeholderStyle={styles.placeholderStyle}
+        placeholder={placeholder + (required ? " *" : "")}
+        placeholderStyle={[styles.placeholderStyle]}
         selectedTextStyle={styles.selectedTextStyle}
         itemTextStyle={styles.itemTextStyle}
         value={value}
         onChange={(item) => onSelect(item.value)}
-        style={[mainStyle.inputContainer, styles.dropdown]}
+        style={[
+          mainStyle.inputContainer,
+          styles.dropdown,
+          isEmpty && { borderColor: "red" },
+        ]}
       />
     </View>
   );
