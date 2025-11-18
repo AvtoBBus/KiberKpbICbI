@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { View, Text, StyleSheet, Animated } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 
 export default function DonutChartUI({
@@ -8,10 +8,25 @@ export default function DonutChartUI({
   strokeWidth = 10,
   color = "#9ED228",
   bgColor = "#E3F5B5",
+  duration = 800,
 }) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const progress = (percent / 100) * circumference;
+
+  const animatedPercent = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(animatedPercent, {
+      toValue: percent / 100,
+      duration: duration,
+      useNativeDriver: false,
+    }).start();
+  }, [percent]);
+
+  const strokeDashoffset = animatedPercent.interpolate({
+    inputRange: [0, 1],
+    outputRange: [circumference, 0],
+  });
 
   return (
     <View
@@ -23,7 +38,6 @@ export default function DonutChartUI({
       }}
     >
       <Svg width={size} height={size}>
-        {/* Серая окружность */}
         <Circle
           stroke={bgColor}
           fill="none"
@@ -33,8 +47,7 @@ export default function DonutChartUI({
           strokeWidth={strokeWidth}
         />
 
-        {/* Зеленая дуга */}
-        <Circle
+        <AnimatedCircle
           stroke={color}
           fill="none"
           cx={size / 2}
@@ -42,20 +55,21 @@ export default function DonutChartUI({
           r={radius}
           strokeWidth={strokeWidth}
           strokeDasharray={`${circumference} ${circumference}`}
-          strokeDashoffset={circumference - progress}
+          strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
           rotation="-90"
           origin={`${size / 2}, ${size / 2}`}
         />
       </Svg>
 
-      {/* Текст по центру */}
       <View style={styles.center}>
         <Text style={styles.percent}>{percent}%</Text>
       </View>
     </View>
   );
 }
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 const styles = StyleSheet.create({
   center: {
@@ -64,7 +78,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   percent: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "600",
     color: "#000",
   },

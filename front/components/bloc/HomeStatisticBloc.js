@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { mainStyle } from "../../style";
-// import { VictoryPie } from "victory-native";
 import DonutChartUI from "../ui/DonutChartUI";
+import ProgressBarUI from "../ui/ProgressBarUI";
 
 export default function HomeStatisticBloc({ userData }) {
   // const { userData } = route.params ?? {};
@@ -38,7 +38,32 @@ export default function HomeStatisticBloc({ userData }) {
           />
         </View>
       </View>
-      <View></View>
+      <View style={styles.bar_flex}>
+        <ProgressBarUI
+          style={styles.bar_width}
+          title="белки"
+          current={20}
+          total={100}
+          color="#9ED228"
+          bgColor="#E6F5C4"
+        />
+        <ProgressBarUI
+          style={styles.bar_width}
+          title="жиры"
+          current={13}
+          total={108}
+          color="#F7B31F"
+          bgColor="#F9E5B8"
+        />
+        <ProgressBarUI
+          style={styles.bar_width}
+          title="углеводы"
+          current={200}
+          total={230}
+          color="#40C2FF"
+          bgColor="#B6E8FF"
+        />
+      </View>
     </View>
   );
 }
@@ -59,12 +84,15 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
   stat_bloc: {
-    // width: 390,
-    // width: 334,
-    // flexDirection: "row",
     justifyContent: "center",
-    // alignItems: "flex-end",
     marginBottom: 0,
     marginTop: 0,
+  },
+  bar_flex: {
+    flexDirection: "row",
+    gap: 30,
+  },
+  bar_width: {
+    width: 74,
   },
 });
