@@ -7,7 +7,7 @@ import { API } from "../api/api.js";
 import InputUI from "../components/ui/InputUI";
 import ButtonUI from "../components/ui/ButtonUI";
 import DropdownUI from "../components/ui/DropdownUI.js";
-import BackImg from "../assets/img/back.svg";
+import BackImg from "../assets/img/Back.js";
 import { ACTIVITY } from "../utils/constants";
 import { mapToOptions } from "../utils/functions.js";
 

@@ -7,7 +7,7 @@ import { stylesAuth } from "../style/auto.js";
 import EmailUI from "../components/ui/EmailUI";
 import PasswordInput from "../components/ui/PasswordUI";
 import ButtonUI from "../components/ui/ButtonUI";
-import Fingerprint from "../assets/img/a-1.svg";
+import Fingerprint from "../assets/img/Fingerprint.js";
 
 export default function RegistrationView({ navigation }) {
   const [email, setEmail] = useState("");
