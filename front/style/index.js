@@ -68,7 +68,7 @@ export const mainStyle = StyleSheet.create({
     width: 334,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-end",
     marginBottom: 20,
     marginTop: 20,
   },

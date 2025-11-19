@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { mainStyle } from "../style";
-import SettingImg from "../assets/img/setting.svg";
+import SettingImg from "../assets/img/Setting.js";
+import BackImg from "../assets/img/Back.js";
 import FooterBloc from "../components/bloc/FooterBloc";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API } from "../api/api.js";
@@ -31,6 +32,7 @@ export default function UserView({ navigation }) {
     <View style={{ height: "100%" }}>
       <SafeAreaView style={mainStyle.main_bloc}>
         <View style={mainStyle.start_bloc}>
+          <BackImg width={30} height={30} onPress={() => navigation.goBack()} />
           <Text style={mainStyle.h1}>Профиль</Text>
           <SettingImg
             width={37}
@@ -46,8 +48,6 @@ export default function UserView({ navigation }) {
               <View style={styles.avatar} />
             </View>
             <View style={[styles.userName, styles.p_table]}>
-              {/* <Text style={mainStyle.p}>Иван</Text>
-              <Text style={mainStyle.p}>Иванович</Text> */}
               <Text style={[mainStyle.p]}>{userData?.UserName ?? "-"}</Text>
             </View>
           </View>
@@ -92,36 +92,8 @@ export default function UserView({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  // main_bloc: {
-  //   flex: 1,
-  //   flexDirection: "column",
-  //   justifyContent: "start",
-  //   alignItems: "center",
-  // },
-  // start_bloc: {
-  //   width: 334,
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   alignItems: "center",
-  //   marginBottom: 20,
-  //   marginTop: 20,
-  // },
-  // senter_bloc: {
-  //   backgroundColor: "white",
-  //   width: 334,
-  //   // height: 263,
-  //   paddingTop: 20,
-  //   paddingBottom: 20,
-  //   paddingRight: 20,
-  //   paddingRight: 20,
-  //   flexDirection: "column",
-  //   justifyContent: "start",
-  //   alignItems: "center",
-  //   borderRadius: 10,
-  // },
   infoRow: {
     flexDirection: "row",
-    // justifyContent: "space-between",
     marginBottom: 12,
     width: 270,
   },

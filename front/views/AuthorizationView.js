@@ -7,7 +7,7 @@ import { stylesAuth } from "../style/auto.js";
 import EmailUI from "../components/ui/EmailUI";
 import PasswordInput from "../components/ui/PasswordUI";
 import ButtonUI from "../components/ui/ButtonUI";
-import Fingerprint from "../assets/img/a-1.svg";
+import Fingerprint from "../assets/img/Fingerprint.js";
 
 export default function AuthorizationView({ navigation }) {
   const [email, setEmail] = useState("");
@@ -17,11 +17,10 @@ export default function AuthorizationView({ navigation }) {
 
   const handleLogin = async () => {
     try {
-      const res = await AuthAPI.login(email.trim(), password);
-      // console.log("Успешный вход:", res);
+      // const res = await AuthAPI.login(email.trim(), password);
       navigation.reset({
         index: 0,
-        routes: [{ name: "User" }],
+        routes: [{ name: "Home" }],
       });
     } catch (err) {
       console.log("Ошибка входа:", err.response?.data || err.message);

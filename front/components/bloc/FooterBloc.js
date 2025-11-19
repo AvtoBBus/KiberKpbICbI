@@ -1,5 +1,5 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import PhotoImg from "../../assets/img/photo.svg";
+import PhotoImg from "../../assets/img/Photo.js";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function FooterBloc({ navigation }) {
