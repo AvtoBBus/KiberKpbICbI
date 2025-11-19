@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Any
+from typing import Literal
 
 class UserDataBase(BaseModel):
     UserDataID: int
@@ -12,4 +12,5 @@ class UserDataDTO(UserDataBase):
     Weight: int
     DesiredHeight: int
     DesiredWeight: int
+    Gender: Literal['м', 'ж']
 

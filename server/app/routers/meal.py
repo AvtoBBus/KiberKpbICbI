@@ -85,6 +85,12 @@ async def get_meal_by_date(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect token",
         )
+    
+    if start_date > end_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="StartDate must by below or equal EndDate"
+        )
 
     service = MealService(db)
     meals = await service.get_meal_by_date(user.UserID, start_date, end_date)

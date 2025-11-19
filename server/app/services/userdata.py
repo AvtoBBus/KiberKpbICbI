@@ -38,6 +38,7 @@ class UserDataService:
                 DesiredWeight = new_userdata.DesiredWeight,
                 Activity  = new_userdata.Activity,
                 Age = new_userdata.Age,
+                Gender = new_userdata.Gender,
                 UserID = user_id
             )
 
@@ -64,6 +65,7 @@ class UserDataService:
             findedUData.DesiredWeight = new_userdata.DesiredWeight
             findedUData.Activity = new_userdata.Activity
             findedUData.Age = new_userdata.Age
+            findedUData.Gender = new_userdata.Gender
 
             await session.commit()
             await session.refresh(findedUData)

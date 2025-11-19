@@ -5,7 +5,6 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
 class FoodService:
     def __init__(self, db: AsyncSession):
         self.db = db

@@ -60,7 +60,8 @@ def parse_text(text: str):
                 'calories_max': calories_max,
                 'proteins': int(match.group(3)),
                 'fats': int(match.group(4)),
-                'carbs': int(match.group(5))
+                'carbs': int(match.group(5)),
+                'origin_text': text
             }
     
     return None

@@ -4,6 +4,8 @@ from app.schemas.statisticwh import StatisticWHDTO
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from datetime import datetime
+
 class StatisticWHService:
     def __init__(self, db: AsyncSession):
         self.db = db
@@ -20,6 +22,13 @@ class StatisticWHService:
             result = await session.execute(stmt)
             return result.scalars().all()
     
+    async def get_statisticwh_by_date(self, user_id: int, start_date: datetime, end_date: datetime):
+        async with self.db as session:
+            stmt = select(StatisticWH).where(and_(StatisticWH.UserID == user_id,
+                                                    StatisticWH.Date >= start_date, StatisticWH.Date <= end_date))
+            result = await session.execute(stmt)
+            return result.scalars().unique().all()
+
     async def add_statisticwh(self, user_id: int, new_statisticwh: StatisticWHDTO):
         async with self.db as session:
 

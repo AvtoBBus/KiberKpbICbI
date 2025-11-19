@@ -1,14 +1,13 @@
 from pydantic import BaseModel, EmailStr
-from typing import Any
+from typing import Literal
 
 class NormCPFCBase(BaseModel):
     NormID: int
 
 class NormCPFCDTO(NormCPFCBase):
-    MinHeight: int
-    MaxHeight: int
-    MinWeight: int
-    MaxWeight: int
+    Height: int
+    Weight: int
+    DesiredWeight: int
     Calories: int
     Protein: int
     Fats: int
@@ -16,3 +15,12 @@ class NormCPFCDTO(NormCPFCBase):
 
     class Config:
         from_attributes = True
+
+
+class NormCPFCDTOPost(NormCPFCBase):
+    Height: int
+    Weight: int
+    DesiredWeight: int
+    Activity: int
+    Gender: Literal['м', 'ж']
+    Age: int

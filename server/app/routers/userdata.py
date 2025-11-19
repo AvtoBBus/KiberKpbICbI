@@ -51,6 +51,7 @@ async def get_userdata(
             DesiredWeight=userData.DesiredWeight,
             Activity=userData.Activity,
             Age=userData.Age,
+            Gender=userData.Gender,
         )
 
 @router.post("/userdata", response_model=UserDataDTO)
@@ -87,6 +88,7 @@ async def add_userdata(
         DesiredWeight=inserted.DesiredWeight,
         Activity=inserted.Activity,
         Age=inserted.Age,
+        Gender=inserted.Gender,
     )
 
 @router.put("/userdata", response_model=UserDataDTO)

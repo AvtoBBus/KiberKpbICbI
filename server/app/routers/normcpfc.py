@@ -2,18 +2,18 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import APIKeyHeader
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.schemas.normcpfc import NormCPFCDTO, NormCPFCDTO
+from app.schemas.normcpfc import NormCPFCDTO, NormCPFCDTO, NormCPFCDTOPost
 from app.services.normcpfc import NormCPFCService
 from app.services.user import UserService
 from app.utils.security import Security
 from app.utils.db import get_db
 
-from typing import List, Annotated
+from typing import Optional, Annotated
 
 router = APIRouter()
 oauth2_scheme = APIKeyHeader(name="token")
 
-@router.get("/normcpfc", response_model=NormCPFCDTO)
+@router.get("/normcpfc", response_model=Optional[NormCPFCDTO])
 async def get_normcpfc(
     token: Annotated[str, Depends(oauth2_scheme)], 
     db: AsyncSession = Depends(get_db)
@@ -42,10 +42,9 @@ async def get_normcpfc(
 
     return NormCPFCDTO(
             NormID=norm.NormID,
-            MinHeight=norm.MinHeight,
-            MaxHeight=norm.MaxHeight,
-            MinWeight=norm.MinWeight,
-            MaxWeight=norm.MaxWeight,
+            Height=norm.Height,
+            Weight=norm.Weight,
+            DesiredWeight=norm.DesiredWeight,
             Calories=norm.Calories,
             Protein=norm.Protein,
             Fats=norm.Fats,
@@ -54,7 +53,7 @@ async def get_normcpfc(
 
 @router.post("/normcpfc", response_model=NormCPFCDTO)
 async def add_normcpfc(
-    new_norm: NormCPFCDTO,
+    new_norm: NormCPFCDTOPost,
     token: Annotated[str, Depends(oauth2_scheme)],
     db: AsyncSession = Depends(get_db)
 ):
@@ -80,10 +79,9 @@ async def add_normcpfc(
     
     return NormCPFCDTO(
         NormID=inserted.NormID,
-        MinHeight=inserted.MinHeight,
-        MaxHeight=inserted.MaxHeight,
-        MinWeight=inserted.MinWeight,
-        MaxWeight=inserted.MaxWeight,
+        Height=inserted.Height,
+        Weight=inserted.Weight,
+        DesiredWeight=inserted.DesiredWeight,
         Calories=inserted.Calories,
         Protein=inserted.Protein,
         Fats=inserted.Fats,
@@ -92,7 +90,7 @@ async def add_normcpfc(
 
 @router.put("/normcpfc", response_model=NormCPFCDTO)
 async def edit_normcpfc(
-    new_norm: NormCPFCDTO,
+    new_norm: NormCPFCDTOPost,
     token: Annotated[str, Depends(oauth2_scheme)],
     db: AsyncSession = Depends(get_db)
 ):

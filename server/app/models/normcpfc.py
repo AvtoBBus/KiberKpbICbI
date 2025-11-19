@@ -7,10 +7,11 @@ class NormCPFC(Base):
     __tablename__ = "normcpfc"
     
     NormID: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    MinHeight: Mapped[int] = mapped_column(Integer)
-    MaxHeight: Mapped[int] = mapped_column(Integer)
-    MinWeight: Mapped[int] = mapped_column(Integer)
-    MaxWeight: Mapped[int] = mapped_column(Integer)
+
+    Weight: Mapped[int] = mapped_column(Integer)
+    Height: Mapped[int] = mapped_column(Integer)
+    DesiredWeight: Mapped[int] = mapped_column(Integer)
+
     Calories: Mapped[int] = mapped_column(Integer)
     Protein: Mapped[int] = mapped_column(Integer)
     Fats: Mapped[int] = mapped_column(Integer)
