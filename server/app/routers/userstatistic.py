@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import APIKeyHeader
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.schemas.userstatistic import UserStatisticDTO
 from app.utils.db import get_db
@@ -14,17 +14,17 @@ router = APIRouter()
 oauth2_scheme = APIKeyHeader(name="token")
 
 @router.get("/userstatistic", response_model=List[UserStatisticDTO])
-def get_userstatistic(
+async def get_userstatistic(
     token: Annotated[str, Depends(oauth2_scheme)],
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
 
     auth = UserService(db)
     security = Security(db)
 
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -36,7 +36,7 @@ def get_userstatistic(
         )
 
     service = UserStatisticService(db)
-    stats = service.get_userstatistic(user.UserID)
+    stats = await service.get_userstatistic(user.UserID)
     return [
         UserStatisticDTO(
             UserID=userstatistic.UserID,
@@ -47,7 +47,5 @@ def get_userstatistic(
             Protein=userstatistic.Protein,
             Fat=userstatistic.Fat,
             Carbonates=userstatistic.Carbonates,
-            MealType=userstatistic.MealType,
-            FoodWeight=userstatistic.FoodWeight
         ) for userstatistic in stats
     ]

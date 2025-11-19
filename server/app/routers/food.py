@@ -1,17 +1,19 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from typing import List
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.schemas.food import FoodDTO, FoodDTOPost
 from app.utils.db import get_db
 from app.services.food import FoodService
+
+from typing import List
 
 router = APIRouter()
 BASE_STR = "/foods"
 
 @router.get(f"{BASE_STR}", response_model=List[FoodDTO])
-def get_food(db: Session = Depends(get_db)):
+async def get_food(db: AsyncSession = Depends(get_db)):
     service = FoodService(db)
-    foods = service.get_food()
+    foods = await service.get_food()
     return [
         FoodDTO(
             FoodID=food.FoodID,
@@ -25,9 +27,15 @@ def get_food(db: Session = Depends(get_db)):
     ]
 
 @router.get(BASE_STR + "/{food_id}", response_model=FoodDTO)
-def get_food(food_id: int, db: Session = Depends(get_db)):
+async def get_food(food_id: int, db: AsyncSession = Depends(get_db)):
     service = FoodService(db)
-    food = service.get_food_id(food_id)
+    food =  await service.get_food_id(food_id)
+    if not food:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Food with id {food_id} not found"
+        )
+    
     return FoodDTO(
         FoodID=food.FoodID,
         Name=food.Name,
@@ -39,9 +47,9 @@ def get_food(food_id: int, db: Session = Depends(get_db)):
     )
 
 @router.post(f"{BASE_STR}", response_model=FoodDTO)
-def add_food(new_food: FoodDTOPost, db: Session = Depends(get_db)):
+async def add_food(new_food: FoodDTOPost, db: AsyncSession = Depends(get_db)):
     service = FoodService(db)
-    inserted = service.add_food(new_food)
+    inserted =  await service.add_food(new_food)
     return FoodDTO(
         FoodID=inserted.FoodID,
         Name=inserted.Name,

@@ -4,8 +4,6 @@ from sqlalchemy.orm import mapped_column, relationship, Mapped
 from datetime import datetime
 from typing import get_args
 
-from app.utils.mealtype import MealTypeEnum
-
 from .user import User
 
 class UserStatistic(Base):
@@ -20,5 +18,3 @@ class UserStatistic(Base):
     Protein: Mapped[int] = mapped_column(Integer) 
     Fat: Mapped[int] = mapped_column(Integer) 
     Carbonates: Mapped[int] = mapped_column(Integer) 
-    MealType: Mapped[MealTypeEnum] = mapped_column(Enum(*get_args(MealTypeEnum)))
-    FoodWeight: Mapped[int] = mapped_column(Integer) 

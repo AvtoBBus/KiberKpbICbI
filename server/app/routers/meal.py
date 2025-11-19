@@ -1,15 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
 from fastapi.security import APIKeyHeader
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from typing import List, Annotated
+from datetime import datetime
 
 from app.schemas.meal import MealDTO, MealDTOPost, MealDTOPut
 from app.utils.db import get_db
 from app.utils.security import Security
 from app.services.meal import MealService
 from app.services.user import UserService
-
-from app.utils.mealtype import MealTypeEnum
 
 
 router = APIRouter()
@@ -18,17 +18,17 @@ oauth2_scheme = APIKeyHeader(name="token")
 BASE_STR = "/meal"
 
 @router.get(BASE_STR, response_model=List[MealDTO])
-def get_meal(
+async def get_meal(
     token: Annotated[str, Depends(oauth2_scheme)],
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
     
     auth = UserService(db)
     security = Security(db)
 
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -40,7 +40,54 @@ def get_meal(
         )
 
     service = MealService(db)
-    meals = service.get_meal(user.UserID)
+    meals = await service.get_meal(user.UserID)
+
+    return [
+        MealDTO(
+            MealID = meal.MealID,
+            Date = meal.Date,
+            MealType = meal.MealType,
+            Products=[
+                {
+                    'FoodID': fim.Food.FoodID,
+                    'Name': fim.Food.Name,
+                    'Weight': fim.Weight,
+                    'Calories': fim.Food.Calories,
+                    'Protein': fim.Food.Protein,
+                    'Fats': fim.Food.Fats,
+                    'Carbonates': fim.Food.Carbonates
+                }
+                for fim in meal.FoodInMeals
+            ]
+        ) for meal in meals
+    ]
+
+@router.get(BASE_STR + "/fromTo", response_model=List[MealDTO])
+async def get_meal_by_date(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    start_date: datetime,
+    end_date: datetime,
+    db: AsyncSession = Depends(get_db),
+):
+    
+    auth = UserService(db)
+    security = Security(db)
+
+    try:
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect token",
+            )
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect token",
+        )
+
+    service = MealService(db)
+    meals = await service.get_meal_by_date(user.UserID, start_date, end_date)
 
     return [
         MealDTO(
@@ -63,18 +110,18 @@ def get_meal(
     ]
 
 @router.get(BASE_STR + "/{meal_id}", response_model=MealDTO)
-def get_meal(
+async def get_meal(
     meal_id: int,
     token: Annotated[str, Depends(oauth2_scheme)],
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
 
     auth = UserService(db)
     security = Security(db)
 
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -87,7 +134,7 @@ def get_meal(
 
     
     service = MealService(db)
-    meal = service.get_meal_id(user.UserID, meal_id)
+    meal = await service.get_meal_id(user.UserID, meal_id)
 
     if not meal:
         raise HTTPException(
@@ -114,15 +161,17 @@ def get_meal(
         )
 
 @router.post(BASE_STR, response_model=MealDTO)
-def add_meal(
+async def add_meal(
     new_meal: MealDTOPost,
     token: Annotated[str, Depends(oauth2_scheme)],
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
     auth = UserService(db)
+    security = Security(db)
+
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -132,16 +181,10 @@ def add_meal(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect token",
         )
-    
-    if not new_meal.MealType in MealTypeEnum.__args__:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Bad meal type"
-        )
 
     service = MealService(db)
     try:
-        inserted = service.add_meal(user.UserID, new_meal)
+        inserted = await service.add_meal(user.UserID, new_meal)
     except:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -167,17 +210,17 @@ def add_meal(
         )
 
 @router.put(BASE_STR, response_model=MealDTO)
-def edit_meal(
+async def edit_meal(
     new_meal: MealDTOPut,
     token: Annotated[str, Depends(oauth2_scheme)], 
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
     auth = UserService(db)
     security = Security(db)
 
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -190,7 +233,7 @@ def edit_meal(
     
     service = MealService(db)
     try:
-        updated = service.edit_meal(user.UserID, new_meal)
+        updated = await service.edit_meal(user.UserID, new_meal)
     except: 
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -216,18 +259,18 @@ def edit_meal(
         )
 
 @router.delete(BASE_STR + "/{meal_id}")
-def delete_meal(
+async def delete_meal(
     response: Response,
     meal_id: int,
     token: Annotated[str, Depends(oauth2_scheme)], 
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
     auth = UserService(db)
     security = Security(db)
 
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -240,7 +283,7 @@ def delete_meal(
     
     service = MealService(db)
     try:
-        service.delete_meal(user.UserID, meal_id)
+        await service.delete_meal(user.UserID, meal_id)
     except: 
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

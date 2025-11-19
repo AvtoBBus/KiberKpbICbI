@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import APIKeyHeader
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.schemas.statisticcpfc import StatisticCPFCDTO, StatisticCPFCDTO
 from app.services.statisticcpfc import StatisticCPFCService
@@ -14,17 +14,17 @@ router = APIRouter()
 oauth2_scheme = APIKeyHeader(name="token")
 
 @router.get("/statisticcpfc", response_model=List[StatisticCPFCDTO])
-def get_statisticcpfc(
+async def get_statisticcpfc(
     token: Annotated[str, Depends(oauth2_scheme)],
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
 
     auth = UserService(db)
     security = Security(db)
     
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -36,7 +36,7 @@ def get_statisticcpfc(
         )
 
     service = StatisticCPFCService(db)
-    stats = service.get_statisticwh(user.UserID)
+    stats = await service.get_statisticwh(user.UserID)
     return [
         StatisticCPFCDTO(
             StatisticCPFCID=statisticcpfc.StatisticCPFCID,
@@ -49,18 +49,18 @@ def get_statisticcpfc(
     ]
 
 @router.get("/statisticcpfc/{statisticcpfc_id}", response_model=StatisticCPFCDTO)
-def get_statisticcpfc_id(
+async def get_statisticcpfc_id(
     statisticcpfc_id: int,
     token: Annotated[str, Depends(oauth2_scheme)],
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
 
     auth = UserService(db)
     security = Security(db)
     
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -72,7 +72,7 @@ def get_statisticcpfc_id(
         )
     
     service = StatisticCPFCService(db)
-    statisticcpfc = service.get_statisticwh_id(user.UserID, statisticcpfc_id)
+    statisticcpfc = await service.get_statisticwh_id(user.UserID, statisticcpfc_id)
 
     if not statisticcpfc:
         raise HTTPException(
@@ -90,18 +90,18 @@ def get_statisticcpfc_id(
     )
 
 @router.post("/statisticcpfc", response_model=StatisticCPFCDTO)
-def add_statisticwh(
+async def add_statisticwh(
     new_statisticcpfc: StatisticCPFCDTO,
     token: Annotated[str, Depends(oauth2_scheme)],
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
 
     auth = UserService(db)
     security = Security(db)
     
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -113,7 +113,7 @@ def add_statisticwh(
         )
     
     service = StatisticCPFCService(db)
-    inserted = service.add_statisticcpfc(user.UserID, new_statisticcpfc)
+    inserted = await service.add_statisticcpfc(user.UserID, new_statisticcpfc)
     return StatisticCPFCDTO(
         StatisticCPFCID=inserted.StatisticCPFCID,
         Date=inserted.Date,
@@ -124,18 +124,18 @@ def add_statisticwh(
     )
 
 @router.put("/statisticcpfc", response_model=StatisticCPFCDTO)
-def edit_statisticwh(
+async def edit_statisticwh(
     new_statisticcpfc: StatisticCPFCDTO,
     token: Annotated[str, Depends(oauth2_scheme)],
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
 
     auth = UserService(db)
     security = Security(db)
     
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -148,7 +148,7 @@ def edit_statisticwh(
     
     service = StatisticCPFCService(db)
     try:
-        updated = service.edit_statisticcpfc(user.UserID, new_statisticcpfc)
+        updated = await service.edit_statisticcpfc(user.UserID, new_statisticcpfc)
     except:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

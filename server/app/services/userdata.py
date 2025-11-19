@@ -1,50 +1,71 @@
-from sqlalchemy.orm import Session
+from fastapi import HTTPException, status
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.models.userdata import UserData
 from app.schemas.userdata import UserDataDTO
-# from app.core.security import get_password_hash
 
 
 class UserDataService:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def get_userdata(self, user_id: int):
-        return self.db.query(UserData).filter(UserData.UserID == user_id).all()
+    async def get_userdata(self, user_id: int):
+        async with self.db as session:
+            stmt = select(UserData).where(UserData.UserID == user_id)
+            result = await session.execute(stmt)
+            data = result.scalars().first()
+            return data
 
-    def get_userdata_id(self, user_id: int, user_data_id: int):
-        return self.db.query(UserData).filter(UserData.UserID == user_id).filter(UserData.UserDataID == user_data_id).first()
+    async def add_userdata(self, user_id: int, new_userdata: UserDataDTO):
+        async with self.db as session:
 
-    def add_userdata(self, user_id: int, new_userdata: UserDataDTO):
-        inserted = UserData(
-            Height = new_userdata.Height,
-            Weight = new_userdata.Weight,
-            DesiredHeight = new_userdata.DesiredHeight,
-            DesiredWeight = new_userdata.DesiredWeight,
-            Activity  = new_userdata.Activity,
-            Age = new_userdata.Age,
-            UserID = user_id
-        )
+            stmt = select(UserData).where(UserData.UserID == user_id)
+            result = await session.execute(stmt)
+            checkExist = result.scalars().first()
 
-        self.db.add(inserted)
-        self.db.commit()
+            if checkExist is not None:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="UserData for user already exist"
+                )
 
-        return inserted
+            inserted = UserData(
+                UserName = new_userdata.UserName,
+                Height = new_userdata.Height,
+                Weight = new_userdata.Weight,
+                DesiredHeight = new_userdata.DesiredHeight,
+                DesiredWeight = new_userdata.DesiredWeight,
+                Activity  = new_userdata.Activity,
+                Age = new_userdata.Age,
+                UserID = user_id
+            )
+
+            session.add(inserted)
+            await session.commit()
+            await session.refresh(inserted)
+
+            return inserted
     
-    def edit_userdata(self, user_id: int, new_userdata: UserDataDTO):
-        findedForUser = self.db.query(UserData).filter(UserData.UserID == user_id)
+    async def edit_userdata(self, user_id: int, new_userdata: UserDataDTO):
+        async with self.db as session:
+            stmt = select(UserData).where(UserData.UserID == user_id)
+            result = await session.execute(stmt)
+        
+            findedUData = result.scalars().first()
 
-        findedUData = findedForUser.filter(UserData.UserDataID == new_userdata.UserDataID).first()
+            if not findedUData or not findedUData.UserDataID.__eq__(new_userdata.UserDataID):
+                raise ValueError
 
-        if not findedUData:
-            raise ValueError
+            findedUData.UserName = new_userdata.UserName
+            findedUData.Height = new_userdata.Height
+            findedUData.Weight = new_userdata.Weight
+            findedUData.DesiredHeight = new_userdata.DesiredHeight
+            findedUData.DesiredWeight = new_userdata.DesiredWeight
+            findedUData.Activity = new_userdata.Activity
+            findedUData.Age = new_userdata.Age
 
-        findedUData.Height = new_userdata.Height
-        findedUData.Weight = new_userdata.Weight
-        findedUData.DesiredHeight = new_userdata.DesiredHeight
-        findedUData.DesiredWeight = new_userdata.DesiredWeight
-        findedUData.Activity = new_userdata.Activity
-        findedUData.Age = new_userdata.Age
+            await session.commit()
+            await session.refresh(findedUData)
 
-        self.db.commit()
-
-        return findedUData
+            return findedUData

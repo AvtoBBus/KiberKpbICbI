@@ -24,21 +24,21 @@ class MealBase(BaseModel):
     Date: datetime
 
 class MealDTO(MealBase):
-    MealType: str
+    MealType: int
     Products: List[MealProduct]
 
     class Config:
         from_attributes = True
 
 class MealDTOPost(MealBase):
-    MealType: str
-    FoodID: List[int]
+    MealType: int
+    Products: List[MealProductBase]
     
     class Config:
         from_attributes = True
 
 class MealDTOPut(MealBase):
-    MealType: str
+    MealType: int
     Products: List[MealProductBase]
 
 

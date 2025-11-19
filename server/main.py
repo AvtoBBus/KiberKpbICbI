@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import config
 
+from app.routers import image as image_router
+
 from app.routers import food as food_router
 from app.routers import meal as meal_router
 
@@ -25,6 +27,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+app.include_router(image_router.router,
+                   prefix=config.settings.api_strings['General'],
+                   tags=["Анализ изображения"]
+                   )
 
 app.include_router(food_router.router,
                    prefix=config.settings.api_strings['General'],

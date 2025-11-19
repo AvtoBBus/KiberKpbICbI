@@ -17,7 +17,7 @@ oauth2_scheme = APIKeyHeader(name="token")
 
 
 @router.get("/user", response_model=UserDTO)
-def get_user(
+async def get_user(
     token: Annotated[str, Depends(oauth2_scheme)], 
     db: Session = Depends(get_db)
 ):
@@ -25,8 +25,9 @@ def get_user(
     security = Security(db)
     
     try:
-        user = service.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await service.get_user(token)
+        checkToken = await security.check_user_token(token, user.UserID)
+        if not checkToken:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -39,31 +40,30 @@ def get_user(
 
     return UserDTO(
         UserID=user.UserID,
-        UserName=user.UserName,
         Email=user.Email,
         Phone=user.Phone
     )
 
 
 @router.post("/login", response_model=Token)
-def login(
+async def login(
     credentials: UserDTOLogin,
     db: Session = Depends(get_db)
 ):
     service = UserService(db)
     try:
-        token = service.login(credentials)
+        token = await service.login(credentials)
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
     return token
 
 @router.put("/edit", response_model=UserDTO)
-def edit(
+async def edit(
     credentials: UserDTO,
     token: Annotated[str, Depends(oauth2_scheme)],
     db: Session = Depends(get_db)
@@ -73,8 +73,8 @@ def edit(
     security = Security(db)
 
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -93,36 +93,36 @@ def edit(
 
     service = UserService(db)
     try:
-        newUser = service.edit_user(user.UserID, credentials)
+        newUser = await service.edit_user(user.UserID, credentials)
     except:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User with this email or username already exist",
+            detail="Bad request",
         )
     
     return newUser
 
 
 @router.post("/auth", response_model=Token)
-def auth(
+async def auth(
     credentials: UserDTOAuth,
     db: Session = Depends(get_db)
 ):
     service = UserService(db)
     try:
-        newUser = service.auth(credentials)
+        newUser = await service.auth(credentials)
     except:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User with this email or username already exist",
+            detail="User with this email already exist",
         )
 
-    token = service.login(credentials)
+    token = await service.login(credentials)
 
     return token
 
 @router.get("/logout")
-def logout(
+async def logout(
     token: Annotated[str, Depends(oauth2_scheme)],
     response: Response,
     db: Session = Depends(get_db)
@@ -131,14 +131,14 @@ def logout(
     security = Security(db)
 
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
             )
         
-        auth.logout(user)
+        await auth.logout(user)
     except:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -151,14 +151,14 @@ def logout(
     return None
 
 @router.post("/refresh", response_model=Token)
-def refresh(
+async def refresh(
     refresh_token: TokenRefreshDTO,
     token: Annotated[str, Depends(oauth2_scheme)],
     db: Session = Depends(get_db)
 ):
     service = UserService(db)
     try:
-        token = service.refresh(token, refresh_token.refresh_token)
+        token = await service.refresh(token, refresh_token.refresh_token)
     except:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

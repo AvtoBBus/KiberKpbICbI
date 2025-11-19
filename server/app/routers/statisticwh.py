@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import APIKeyHeader
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.schemas.statisticwh import StatisticWHDTO, StatisticWHDTO
 from app.utils.db import get_db
@@ -14,16 +14,16 @@ router = APIRouter()
 oauth2_scheme = APIKeyHeader(name="token")
 
 @router.get("/statisticwh", response_model=List[StatisticWHDTO])
-def get_statisticwh(
+async def get_statisticwh(
     token: Annotated[str, Depends(oauth2_scheme)], 
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
     auth = UserService(db)
     security = Security(db)
 
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -35,7 +35,7 @@ def get_statisticwh(
         )
 
     service = StatisticWHService(db)
-    stats = service.get_statisticwh(user.UserID)
+    stats = await service.get_statisticwh(user.UserID)
     return [
         StatisticWHDTO(
             StatisticWHID=statisticwh.StatisticWHID,
@@ -46,17 +46,17 @@ def get_statisticwh(
     ]
 
 @router.get("/statisticwh/{statisticwh_id}", response_model=StatisticWHDTO)
-def get_statisticwh_id(
+async def get_statisticwh_id(
     statisticwh_id: int,
     token: Annotated[str, Depends(oauth2_scheme)], 
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
     auth = UserService(db)
     security = Security(db)
 
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -68,7 +68,7 @@ def get_statisticwh_id(
         )
     
     service = StatisticWHService(db)
-    statisticwh = service.get_statisticwh_id(user.UserID, statisticwh_id)
+    statisticwh = await service.get_statisticwh_id(user.UserID, statisticwh_id)
 
     if not statisticwh:
         raise HTTPException(
@@ -85,18 +85,18 @@ def get_statisticwh_id(
 
 
 @router.post("/statisticwh", response_model=StatisticWHDTO)
-def add_statisticwh(
+async def add_statisticwh(
     new_statisticwh: StatisticWHDTO,
     token: Annotated[str, Depends(oauth2_scheme)], 
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
 
     auth = UserService(db)
     security = Security(db)
 
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -108,7 +108,7 @@ def add_statisticwh(
         )
     
     service = StatisticWHService(db)
-    inserted = service.add_statisticwh(user.UserID, new_statisticwh)
+    inserted = await service.add_statisticwh(user.UserID, new_statisticwh)
     return StatisticWHDTO(
         StatisticWHID=inserted.StatisticWHID,
         Date=inserted.Date,
@@ -117,17 +117,17 @@ def add_statisticwh(
     )
 
 @router.put("/statisticwh", response_model=StatisticWHDTO)
-def edit_statisticwh(
+async def edit_statisticwh(
     new_statisticwh: StatisticWHDTO,
     token: Annotated[str, Depends(oauth2_scheme)], 
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
     auth = UserService(db)
     security = Security(db)
 
     try:
-        user = auth.get_user(token)
-        if not security.check_user_token(token, user.UserID):
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect token",
@@ -140,7 +140,7 @@ def edit_statisticwh(
     
     service = StatisticWHService(db)
     try:
-        updated = service.edit_statisticwh(user.UserID, new_statisticwh)
+        updated = await service.edit_statisticwh(user.UserID, new_statisticwh)
     except:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

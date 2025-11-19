@@ -22,12 +22,12 @@ class Settings(BaseSettings):
 
 
     # Database
-    DATABASE_URL: str = "mysql+mysqlconnector://root:root@localhost:3306/newschema"
+    DATABASE_URL: str = "mysql+aiomysql://root:root@localhost:3306/newschema"
 
     # Security
     SECRET_KEY: str = "your-secret-key"
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: float = 5
+    ACCESS_TOKEN_EXPIRE_MINUTES: float = 9999999
 
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = ["*"]

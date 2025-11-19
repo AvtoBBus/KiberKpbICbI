@@ -8,7 +8,6 @@ class User(Base):
     
     UserID: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
-    UserName: Mapped[str] = mapped_column(String)
     Salt: Mapped[str] = mapped_column(String)
     Password: Mapped[str] = mapped_column(String)
     Email: Mapped[str] = mapped_column(String)

@@ -4,9 +4,7 @@ from typing import Optional
 class UserBase(BaseModel):
     UserID: int
 
-
 class UserDTO(UserBase):
-    UserName: str
     Email: EmailStr
     Phone: Optional[str]
 

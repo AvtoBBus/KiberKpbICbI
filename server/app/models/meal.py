@@ -4,8 +4,6 @@ from sqlalchemy.orm import mapped_column, relationship, Mapped
 from datetime import datetime
 from typing import get_args
 
-from app.utils.mealtype import MealTypeEnum
-
 from .user import User
 
 class Meal(Base):
@@ -13,7 +11,7 @@ class Meal(Base):
     
     MealID: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     Date: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
-    MealType: Mapped[MealTypeEnum] = mapped_column(Enum(*get_args(MealTypeEnum)))
+    MealType: Mapped[int] = mapped_column(Integer)
 
     UserID: Mapped[int] = mapped_column(ForeignKey("user.UserID"))
-    FoodInMeals: Mapped[list["FoodInMeal"]] = relationship(back_populates="Meal")    
+    FoodInMeals: Mapped[list["FoodInMeal"]] = relationship(back_populates="Meal", lazy='joined')

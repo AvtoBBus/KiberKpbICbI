@@ -1,55 +1,71 @@
-from sqlalchemy.orm import Session
+from fastapi import HTTPException, status
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.models.normcpfc import NormCPFC
 from app.schemas.normcpfc import NormCPFCDTO
-# from app.core.security import get_password_hash
 
 class NormCPFCService:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
-    
-    def get_normcpfc_id(self, user_id: int, norm_id: int):
-        return self.db.query(NormCPFC).filter(NormCPFC.UserID == user_id).filter(NormCPFC.NormID == norm_id).first()
-    
-    def get_normcpfc(self, user_id: int):
-        return self.db.query(NormCPFC).filter(NormCPFC.UserID == user_id).all()
-        
-    def add_normcpfc(self, user_id: int, new_norm: NormCPFCDTO):
 
-        inserted = NormCPFC(
-            MinHeight=new_norm.MinHeight,
-            MaxHeight=new_norm.MaxHeight,
-            MinWeight=new_norm.MinWeight,
-            MaxWeight=new_norm.MaxWeight,
-            Calories=new_norm.Calories,
-            Protein=new_norm.Protein,
-            Fats=new_norm.Fats,
-            Carbonatest=new_norm.Carbonatest,
-            UserID=user_id
-        )
+    async def get_normcpfc(self, user_id: int):
+        async with self.db as session:
+            stmt = select(NormCPFC).where(NormCPFC.UserID == user_id)
+            result = await session.execute(stmt)
+            return result.scalars().first()
 
-        self.db.add(inserted)
-        self.db.commit()
+    async def add_normcpfc(self, user_id: int, new_norm: NormCPFCDTO):
+        async with self.db as session:
+            stmt = select(NormCPFC).where(NormCPFC.UserID == user_id)
+            result = await session.execute(stmt)
 
-        return inserted
+            checkExist = result.scalars().first()
 
-    def edit_normcpfc(self, user_id: int, new_norm: NormCPFCDTO):
+            if checkExist is not None:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="NormCPFC for user already exist"
+                )
 
-        findedForUser = self.db.query(NormCPFC).filter(NormCPFC.UserID == user_id)
+            inserted = NormCPFC(
+                MinHeight=new_norm.MinHeight,
+                MaxHeight=new_norm.MaxHeight,
+                MinWeight=new_norm.MinWeight,
+                MaxWeight=new_norm.MaxWeight,
+                Calories=new_norm.Calories,
+                Protein=new_norm.Protein,
+                Fats=new_norm.Fats,
+                Carbonatest=new_norm.Carbonatest,
+                UserID=user_id
+            )
 
-        findedNorm = findedForUser.filter(NormCPFC.NormID == new_norm.NormID).first()
+            session.add(inserted)
+            await session.commit()
+            await session.refresh(inserted)
 
-        if not findedNorm:
-            raise ValueError
+            return inserted
 
-        findedNorm.MinHeight=new_norm.MinHeight
-        findedNorm.MaxHeight=new_norm.MaxHeight
-        findedNorm.MinWeight=new_norm.MinWeight
-        findedNorm.MaxWeight=new_norm.MaxWeight
-        findedNorm.Calories=new_norm.Calories
-        findedNorm.Protein=new_norm.Protein
-        findedNorm.Fats=new_norm.Fats
-        findedNorm.Carbonatest=new_norm.Carbonatest
+    async def edit_normcpfc(self, user_id: int, new_norm: NormCPFCDTO):
+        async with self.db as session:
+            stmt = select(NormCPFC).where(NormCPFC.UserID == user_id)
+            result = await session.execute(stmt)
 
-        self.db.commit()
+            findedNorm = result.scalars().first()
 
-        return findedNorm
+            if not findedNorm or not findedNorm.NormID.__eq__(new_norm.NormID):
+                raise ValueError
+
+            findedNorm.MinHeight=new_norm.MinHeight
+            findedNorm.MaxHeight=new_norm.MaxHeight
+            findedNorm.MinWeight=new_norm.MinWeight
+            findedNorm.MaxWeight=new_norm.MaxWeight
+            findedNorm.Calories=new_norm.Calories
+            findedNorm.Protein=new_norm.Protein
+            findedNorm.Fats=new_norm.Fats
+            findedNorm.Carbonatest=new_norm.Carbonatest
+
+            await session.commit()
+            await session.refresh(findedNorm)
+
+            return findedNorm

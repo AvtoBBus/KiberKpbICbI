@@ -13,8 +13,6 @@ class UserStatisticDTO(UserStatisticBase):
     Protein: int 
     Fat: int 
     Carbonates: int 
-    MealType: str
-    FoodWeight: int
 
     class Config:
         from_attributes = True
