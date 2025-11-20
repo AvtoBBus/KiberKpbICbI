@@ -41,7 +41,6 @@ async def get_normcpfc(
         return None
 
     return NormCPFCDTO(
-            NormID=norm.NormID,
             Height=norm.Height,
             Weight=norm.Weight,
             DesiredWeight=norm.DesiredWeight,
@@ -78,7 +77,6 @@ async def add_normcpfc(
     inserted = await service.add_normcpfc(user.UserID, new_norm)
     
     return NormCPFCDTO(
-        NormID=inserted.NormID,
         Height=inserted.Height,
         Weight=inserted.Weight,
         DesiredWeight=inserted.DesiredWeight,

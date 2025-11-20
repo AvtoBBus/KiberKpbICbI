@@ -65,9 +65,6 @@ class NormCPFCService:
 
             findedNorm = result.scalars().first()
 
-            if not findedNorm or not findedNorm.NormID.__eq__(new_norm.NormID):
-                raise ValueError
-
             calc = calculatorCPFC(
                 weight=new_norm.Weight,
                 height=new_norm.Height,

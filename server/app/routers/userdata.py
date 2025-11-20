@@ -43,7 +43,6 @@ async def get_userdata(
         return None
 
     return UserDataDTO(
-            UserDataID=userData.UserDataID,
             UserName=userData.UserName,
             Height=userData.Height,
             Weight=userData.Weight,
@@ -80,7 +79,6 @@ async def add_userdata(
     service = UserDataService(db)
     inserted = await service.add_userdata(user.UserID, new_user_data)
     return UserDataDTO(
-        UserDataID=inserted.UserDataID,
         UserName=inserted.UserName,
         Height=inserted.Height,
         Weight=inserted.Weight,

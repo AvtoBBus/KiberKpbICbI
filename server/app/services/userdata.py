@@ -55,9 +55,6 @@ class UserDataService:
         
             findedUData = result.scalars().first()
 
-            if not findedUData or not findedUData.UserDataID.__eq__(new_userdata.UserDataID):
-                raise ValueError
-
             findedUData.UserName = new_userdata.UserName
             findedUData.Height = new_userdata.Height
             findedUData.Weight = new_userdata.Weight
