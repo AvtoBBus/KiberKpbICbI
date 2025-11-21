@@ -3,8 +3,16 @@ import { mainStyle } from "../../style";
 import DonutChartUI from "../ui/DonutChartUI";
 import ProgressBarUI from "../ui/ProgressBarUI";
 
-export default function HomeStatisticBloc({ userData }) {
+export default function HomeStatisticBloc({ userData, userStat }) {
   // const { userData } = route.params ?? {};
+  const procent = userData?.Calories
+    ? ((userStat?.Calories ?? 0) * 100) / userData.Calories
+    : 0;
+
+  const mod =
+    userData?.Calories && userStat?.Calories
+      ? userData.Calories - userStat.Calories
+      : "--";
 
   return (
     <View style={mainStyle.white_bloc}>
@@ -14,52 +22,46 @@ export default function HomeStatisticBloc({ userData }) {
           <View style={styles.infoRow}>
             <Text style={[mainStyle.p, styles.p_table]}>потреблено</Text>
             <Text style={[mainStyle.p, styles.p_table]}>
-              {userData?.p ?? "1000"}
+              {userStat?.Calories ?? "--"}
             </Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={[mainStyle.p, styles.p_table]}>осталось</Text>
-            <Text style={[mainStyle.p, styles.p_table]}>
-              {userData?.o ?? "1000"}
-            </Text>
+            <Text style={[mainStyle.p, styles.p_table]}>{mod}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={[mainStyle.p, styles.p_table]}>всего</Text>
             <Text style={[mainStyle.p, styles.p_table]}>
-              {userData?.v ?? "1000"}
+              {userData?.Calories ?? "--"}
             </Text>
           </View>
         </View>
         <View>
-          <DonutChartUI
-            percent={userData?.percent ?? 65}
-            size={100}
-            strokeWidth={12}
-          />
+          <DonutChartUI percent={procent} size={100} strokeWidth={12} />
         </View>
       </View>
       <View style={styles.bar_flex}>
         <ProgressBarUI
           style={styles.bar_width}
           title="белки"
-          current={20}
-          total={100}
+          current={userStat?.Protein ?? 0}
+          total={userData?.Protein ?? 0}
           color="#9ED228"
           bgColor="#E6F5C4"
         />
         <ProgressBarUI
           style={styles.bar_width}
           title="жиры"
-          current={13}
-          total={108}
+          current={userStat?.Fats ?? 0}
+          total={userData?.Fats ?? 0}
           color="#F7B31F"
           bgColor="#F9E5B8"
         />
         <ProgressBarUI
           style={styles.bar_width}
           title="углеводы"
-          current={200}
-          total={230}
+          current={userStat?.Carbonatest ?? 0}
+          total={userData?.Carbonatest ?? 0}
           color="#40C2FF"
           bgColor="#B6E8FF"
         />

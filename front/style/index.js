@@ -12,6 +12,14 @@ export const mainStyle = StyleSheet.create({
     color: "black",
     textAlign: "center",
   },
+  h2: {
+    // fontFamily: "regular",
+    fontSize: 31,
+    // lineHeight: "110%",
+    color: "black",
+    textAlign: "center",
+    fontWeight: 600,
+  },
   p_input: {
     // fontFamily: "regular",
     fontSize: 16,

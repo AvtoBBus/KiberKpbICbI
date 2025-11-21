@@ -20,7 +20,7 @@ export default function AuthorizationView({ navigation }) {
       // const res = await AuthAPI.login(email.trim(), password);
       navigation.reset({
         index: 0,
-        routes: [{ name: "Home" }],
+        routes: [{ name: "Result" }],
       });
     } catch (err) {
       console.log("Ошибка входа:", err.response?.data || err.message);

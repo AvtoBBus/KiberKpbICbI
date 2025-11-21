@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { mainStyle } from "../style";
 import SettingImg from "../assets/img/Setting.js";
 import BackImg from "../assets/img/Back.js";
@@ -7,7 +7,7 @@ import FooterBloc from "../components/bloc/FooterBloc";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API } from "../api/api.js";
 import { useFocusEffect } from "@react-navigation/native";
-import { ACTIVITY } from "../utils/constants";
+import { ACTIVITY, GENDER } from "../utils/constants";
 
 export default function UserView({ navigation }) {
   const [userData, setUserData] = useState(null);
@@ -16,7 +16,7 @@ export default function UserView({ navigation }) {
       const res = await API.getUserData();
 
       // console.log("ghgh:", res);
-      setUserData(res[0]);
+      setUserData(res);
     } catch (err) {
       console.log("Ошибка загрузки:", err);
     }
@@ -32,15 +32,18 @@ export default function UserView({ navigation }) {
     <View style={{ height: "100%" }}>
       <SafeAreaView style={mainStyle.main_bloc}>
         <View style={mainStyle.start_bloc}>
-          <BackImg width={30} height={30} onPress={() => navigation.goBack()} />
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <BackImg width={30} height={30} />
+          </TouchableOpacity>
+
           <Text style={mainStyle.h1}>Профиль</Text>
-          <SettingImg
-            width={37}
-            height={37}
+          <TouchableOpacity
             onPress={() =>
               navigation.navigate("EditUser", { Userdata: userData })
             }
-          />
+          >
+            <SettingImg width={37} height={37} />
+          </TouchableOpacity>
         </View>
         <View style={mainStyle.white_bloc}>
           <View style={styles.userHeader}>
@@ -81,6 +84,12 @@ export default function UserView({ navigation }) {
               <Text style={[mainStyle.p, styles.p_table]}>Активность:</Text>
               <Text style={[mainStyle.p, styles.p_table]}>
                 {ACTIVITY[userData?.Activity] ?? "-"}
+              </Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={[mainStyle.p, styles.p_table]}>Пол:</Text>
+              <Text style={[mainStyle.p, styles.p_table]}>
+                {GENDER[userData?.Gender] ?? "-"}
               </Text>
             </View>
           </View>
