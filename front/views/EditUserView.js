@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { mainStyle } from "../style";
@@ -8,7 +8,7 @@ import InputUI from "../components/ui/InputUI";
 import ButtonUI from "../components/ui/ButtonUI";
 import DropdownUI from "../components/ui/DropdownUI.js";
 import BackImg from "../assets/img/Back.js";
-import { ACTIVITY } from "../utils/constants";
+import { ACTIVITY, GENDER } from "../utils/constants";
 import { mapToOptions } from "../utils/functions.js";
 
 export default function EditUserView({ route, navigation }) {
@@ -25,10 +25,12 @@ export default function EditUserView({ route, navigation }) {
     DesiredWeight: String(Userdata?.DesiredWeight ?? ""),
     DesiredHeight: String(Userdata?.DesiredHeight ?? ""),
     Activity: Userdata?.Activity ?? null,
-    UserDataID: Userdata?.UserDataID ?? 0,
+    Gender: Userdata?.Gender ?? null,
+    // UserDataID: Userdata?.UserDataID ?? 0,
   });
 
   const handleChange = (field, value) => {
+    // console.log(field, value);
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -42,13 +44,24 @@ export default function EditUserView({ route, navigation }) {
         DesiredWeight: Number(formData.DesiredWeight),
         DesiredHeight: Number(formData.DesiredHeight),
         Activity: Number(formData.Activity),
+        Gender: formData.Gender,
         UserName: formData.UserName,
+      };
+      const norma = {
+        Age: Number(formData.Age),
+        Height: Number(formData.Height),
+        Weight: Number(formData.Weight),
+        DesiredWeight: Number(formData.DesiredWeight),
+        Activity: Number(formData.Activity),
+        Gender: formData.Gender,
       };
       if (flag) {
         const res = await API.putUserData(payload);
+        await API.putStatNorm(norma);
         navigation.goBack();
       } else {
         const res = await API.postUserData(payload);
+        await API.postStatNorm(norma);
         navigation.navigate("Home");
       }
     } catch (err) {
@@ -62,15 +75,22 @@ export default function EditUserView({ route, navigation }) {
         <SafeAreaView style={mainStyle.main_bloc}>
           <View style={mainStyle.start_bloc}>
             {flag && (
-              <BackImg
-                width={30}
-                height={30}
-                onPress={() => navigation.goBack()}
-              />
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <BackImg width={30} height={30} />
+              </TouchableOpacity>
             )}
             <Text style={mainStyle.h1}>Настройки профиля</Text>
           </View>
           <View style={[mainStyle.white_bloc, styles.inputPadding]}>
+            <DropdownUI
+              options={mapToOptions(GENDER)}
+              required
+              value={formData.Gender}
+              label="Пол"
+              onSelect={(v) => handleChange("Gender", v)}
+              placeholder="Выберите пол"
+              style={styles.inputWight}
+            />
             <DropdownUI
               options={mapToOptions(ACTIVITY)}
               required
