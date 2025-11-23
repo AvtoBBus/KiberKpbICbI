@@ -6,7 +6,6 @@ class Food(Base):
     __tablename__ = "food"
     
     FoodID: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    FoodInMeals: Mapped["FoodInMeal"] = relationship(back_populates="Food")
     
     Name: Mapped[str] = mapped_column(String)
     Calories: Mapped[int] = mapped_column(Integer)

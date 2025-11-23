@@ -58,7 +58,7 @@ class UserService:
 
     async def login(self, credentials: Union[UserDTOLogin, User]) -> Token:
         async with self.db as session:
-            security = Security(session)
+            security = Security(self.db)
             try:
                 token = await security.login_for_access_token(
                     email=credentials.Email, password=credentials.Password)

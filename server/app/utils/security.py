@@ -41,7 +41,6 @@ class Security:
     async def login_for_access_token(self, email: str, password: str) -> Token:
         async with self.db as session:
             user: UserDTO = await self.validate_user(email, password)
-
             if not user:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -85,7 +84,6 @@ class Security:
             await session.commit()
             await session.refresh(findedUser)
 
-
             return Token(
                 access_token=access_token,
                 refresh_token=refresh_token,
@@ -104,7 +102,6 @@ class Security:
                 Email=finded.Email,
                 Phone=finded.Phone
             )
-
 
             if finded and finded.Password.__eq__(hashlib.sha256(password.encode()).hexdigest()):
                 return user

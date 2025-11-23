@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Annotated
 from datetime import datetime
 
-from app.schemas.meal import MealDTO, MealDTOPost, MealDTOPut
+from app.schemas.meal import MealDTO, MealDTOPost
 from app.utils.db import get_db
 from app.utils.security import Security
 from app.services.meal import MealService
@@ -49,13 +49,12 @@ async def get_meal(
             MealType = meal.MealType,
             Products=[
                 {
-                    'FoodID': fim.Food.FoodID,
-                    'Name': fim.Food.Name,
-                    'Weight': fim.Weight,
-                    'Calories': fim.Food.Calories,
-                    'Protein': fim.Food.Protein,
-                    'Fats': fim.Food.Fats,
-                    'Carbonates': fim.Food.Carbonates
+                    'ProductID': fim.ProductID,
+                    'ProductName': fim.ProductName,
+                    'Calories': fim.Calories,
+                    'Protein': fim.Protein,
+                    'Fats': fim.Fats,
+                    'Carbonates': fim.Carbonates
                 }
                 for fim in meal.FoodInMeals
             ]
@@ -102,13 +101,12 @@ async def get_meal_by_date(
             MealType = meal.MealType,
             Products=[
                 {
-                    'FoodID': fim.Food.FoodID,
-                    'Name': fim.Food.Name,
-                    'Weight': fim.Weight,
-                    'Calories': fim.Food.Calories,
-                    'Protein': fim.Food.Protein,
-                    'Fats': fim.Food.Fats,
-                    'Carbonates': fim.Food.Carbonates
+                    'ProductID': fim.ProductID,
+                    'ProductName': fim.ProductName,
+                    'Calories': fim.Calories,
+                    'Protein': fim.Protein,
+                    'Fats': fim.Fats,
+                    'Carbonates': fim.Carbonates
                 }
                 for fim in meal.FoodInMeals
             ]
@@ -154,13 +152,12 @@ async def get_meal(
             MealType = meal.MealType,
             Products=[
                 {
-                    'FoodID': fim.Food.FoodID,
-                    'Name': fim.Food.Name,
-                    'Weight': fim.Weight,
-                    'Calories': fim.Food.Calories,
-                    'Protein': fim.Food.Protein,
-                    'Fats': fim.Food.Fats,
-                    'Carbonates': fim.Food.Carbonates
+                    'ProductID': fim.ProductID,
+                    'ProductName': fim.ProductName,
+                    'Calories': fim.Calories,
+                    'Protein': fim.Protein,
+                    'Fats': fim.Fats,
+                    'Carbonates': fim.Carbonates
                 }
                 for fim in meal.FoodInMeals
             ]
@@ -189,13 +186,13 @@ async def add_meal(
         )
 
     service = MealService(db)
-    try:
-        inserted = await service.add_meal(user.UserID, new_meal)
-    except:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Food with id {new_meal.FoodID} doesn`t exist"
-        )
+    # try:
+    inserted = await service.add_meal(user.UserID, new_meal)
+    # except:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND,
+    #         detail=f"Food with id {new_meal.FoodID} doesn`t exist"
+    #     )
 
     return MealDTO(
             MealID = inserted.MealID,
@@ -203,64 +200,14 @@ async def add_meal(
             MealType = inserted.MealType,
             Products=[
                 {
-                    'FoodID': fim.Food.FoodID,
-                    'Name': fim.Food.Name,
-                    'Weight': fim.Weight,
-                    'Calories': fim.Food.Calories,
-                    'Protein': fim.Food.Protein,
-                    'Fats': fim.Food.Fats,
-                    'Carbonates': fim.Food.Carbonates
+                    'ProductID': fim.ProductID,
+                    'ProductName': fim.ProductName,
+                    'Calories': fim.Calories,
+                    'Protein': fim.Protein,
+                    'Fats': fim.Fats,
+                    'Carbonates': fim.Carbonates
                 }
                 for fim in inserted.FoodInMeals
-            ]
-        )
-
-@router.put(BASE_STR, response_model=MealDTO)
-async def edit_meal(
-    new_meal: MealDTOPut,
-    token: Annotated[str, Depends(oauth2_scheme)], 
-    db: AsyncSession = Depends(get_db)
-):
-    auth = UserService(db)
-    security = Security(db)
-
-    try:
-        user = await auth.get_user(token)
-        if not await security.check_user_token(token, user.UserID):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
-            )
-    except:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
-        )
-    
-    service = MealService(db)
-    try:
-        updated = await service.edit_meal(user.UserID, new_meal)
-    except: 
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Meal with id {new_meal.MealID} doesn't exist"
-        )
-
-    return MealDTO(
-            MealID = updated.MealID,
-            Date = updated.Date,
-            MealType = updated.MealType,
-            Products=[
-                {
-                    'FoodID': fim.Food.FoodID,
-                    'Name': fim.Food.Name,
-                    'Weight': fim.Weight,
-                    'Calories': fim.Food.Calories,
-                    'Protein': fim.Food.Protein,
-                    'Fats': fim.Food.Fats,
-                    'Carbonates': fim.Food.Carbonates
-                }
-                for fim in updated.FoodInMeals
             ]
         )
 

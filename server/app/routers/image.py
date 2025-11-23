@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Request
 from fastapi.security import APIKeyHeader
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,6 +16,7 @@ oauth2_scheme = APIKeyHeader(name="token")
 
 @router.post("/image")
 async def send_image(
+    request: Request,
     token: Annotated[str, Depends(oauth2_scheme)],
     db: AsyncSession = Depends(get_db),
     file: UploadFile = File(...),
@@ -38,5 +39,5 @@ async def send_image(
         )
     
     contents = await file.read()
-    result = await describe_image(contents, file)
+    result = await describe_image(contents, file, request.client.host)
     return result   
