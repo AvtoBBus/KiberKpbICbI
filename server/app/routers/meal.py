@@ -113,6 +113,59 @@ async def get_meal_by_date(
         ) for meal in meals
     ]
 
+@router.get(BASE_STR + "/fromTo/{meal_type}", response_model=List[MealDTO])
+async def get_meal_by_date_and_mealtype(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    start_date: datetime,
+    end_date: datetime,
+    meal_type: int,
+    db: AsyncSession = Depends(get_db),
+):
+        
+    auth = UserService(db)
+    security = Security(db)
+
+    try:
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect token",
+            )
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect token",
+        )
+    
+    if start_date > end_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="StartDate must by below or equal EndDate"
+        )
+
+    service = MealService(db)
+    meals = await service.get_meal_by_date_and_mealtype(user.UserID, start_date, end_date, meal_type)
+
+    return [
+        MealDTO(
+            MealID = meal.MealID,
+            Date = meal.Date,
+            MealType = meal.MealType,
+            Products=[
+                {
+                    'ProductID': fim.ProductID,
+                    'ProductName': fim.ProductName,
+                    'Calories': fim.Calories,
+                    'Protein': fim.Protein,
+                    'Fats': fim.Fats,
+                    'Carbonates': fim.Carbonates
+                }
+                for fim in meal.FoodInMeals
+            ]
+        ) for meal in meals
+    ]
+
 @router.get(BASE_STR + "/{meal_id}", response_model=MealDTO)
 async def get_meal(
     meal_id: int,
@@ -186,13 +239,7 @@ async def add_meal(
         )
 
     service = MealService(db)
-    # try:
     inserted = await service.add_meal(user.UserID, new_meal)
-    # except:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_404_NOT_FOUND,
-    #         detail=f"Food with id {new_meal.FoodID} doesn`t exist"
-    #     )
 
     return MealDTO(
             MealID = inserted.MealID,
@@ -241,6 +288,48 @@ async def delete_meal(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Meal with id {meal_id} doesn't exist"
+        )
+
+    response.status_code = status.HTTP_204_NO_CONTENT
+    return None
+
+
+@router.delete(BASE_STR + "/{meal_id}/{product_id}")
+async def delete_product_in_meal(
+    response: Response,
+    meal_id: int,
+    product_id: int,
+    token: Annotated[str, Depends(oauth2_scheme)], 
+    db: AsyncSession = Depends(get_db)
+):
+    auth = UserService(db)
+    security = Security(db)
+
+    try:
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect token",
+            )
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect token",
+        )
+    
+    service = MealService(db)
+    try:
+        await service.delete_product_in_meal(user.UserID, meal_id, product_id)
+    except ValueError: 
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Meal with id {meal_id} doesn't exist"
+        )
+    except IndexError: 
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Product with id {product_id} in meal with id {meal_id} doesn't exist"
         )
 
     response.status_code = status.HTTP_204_NO_CONTENT

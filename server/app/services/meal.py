@@ -30,11 +30,20 @@ class MealService:
             result = await session.execute(stmt)
             return result.scalars().all()
 
-    async def get_meal_by_date(self, user_id: int, start_date: datetime, end_date: datetime) -> List[Any]:
+    async def get_meal_by_date(self, user_id: int, start_date: datetime, end_date: datetime) -> List[Meal]:
         async with self.db as session:
             stmt = select(Meal).where(and_(Meal.UserID == user_id, Meal.Date >= start_date, Meal.Date <= end_date)).options(
                 selectinload(Meal.FoodInMeals).selectinload(FoodInMeal.Food))
-            print(stmt)
+            result = await session.execute(stmt)
+            return result.scalars().all()
+
+    async def get_meal_by_date_and_mealtype(self, user_id: int, start_date: datetime, end_date: datetime, meal_type: int) -> List[Meal]:
+        async with self.db as session:
+            stmt = select(Meal).where(and_(Meal.UserID == user_id,
+                                            Meal.Date >= start_date,
+                                            Meal.Date <= end_date,
+                                            Meal.MealType == meal_type
+                                        )).options(selectinload(Meal.FoodInMeals))
             result = await session.execute(stmt)
             return result.scalars().all()
 
@@ -46,7 +55,6 @@ class MealService:
                                            Meal.MealType == new_meal.MealType)).options(selectinload(Meal.FoodInMeals))
             result = await session.execute(stmt)
             findedMeal = result.scalars().first()
-
 
             if not findedMeal:
                 findedMeal = Meal(
@@ -77,7 +85,7 @@ class MealService:
             await session.refresh(findedMeal)
 
             return findedMeal
-        
+
     async def delete_meal(self, user_id: int, meal_id: int):
         async with self.db as session:
             stmt = select(Meal).where(
@@ -96,6 +104,28 @@ class MealService:
             for fim in findedFoodInMeal:
                 await self.db.delete(fim)
 
+            await session.commit()
+
+            return None
+
+    async def delete_product_in_meal(self, user_id: int, meal_id: int, product_id: int):
+        async with self.db as session:
+            stmt = select(Meal).where(and_(Meal.UserID == user_id, Meal.MealID == meal_id))
+            result = await session.execute(stmt)
+            findedMeal = result.scalars().first()
+
+            if not findedMeal:
+                raise ValueError
+            
+            stmt = select(FoodInMeal).where(and_(FoodInMeal.MealID == meal_id, FoodInMeal.ProductID == product_id))
+            result = await session.execute(stmt)
+            findedFoodInMeal = result.scalars().first()
+
+            if not findedFoodInMeal:
+                raise IndexError
+            
+
+            await session.delete(findedFoodInMeal)
             await session.commit()
 
             return None
