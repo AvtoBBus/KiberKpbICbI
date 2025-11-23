@@ -2,7 +2,7 @@
 name: Frontend-issue
 about: Когда нужно исправить что-то на фронте
 title: 'Frontend:'
-labels: ''
+labels: Frontend
 assignees: ''
 
 ---

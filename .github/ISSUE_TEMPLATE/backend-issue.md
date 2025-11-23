@@ -2,7 +2,7 @@
 name: Backend-Issue
 about: Когда нужно исправить что-то на беке
 title: 'Backend: '
-labels: ''
+labels: Backend
 assignees: ''
 
 ---
