@@ -25,6 +25,7 @@ class MealDTO(MealBase):
         from_attributes = True
 
 class MealDTOPost(MealBase):
+    Date: datetime
     MealType: int
     Product: MealProduct
     

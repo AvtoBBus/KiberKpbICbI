@@ -11,7 +11,6 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy import select, and_, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
 class MealService:
     def __init__(self, db: AsyncSession):
         self.db = db
@@ -49,10 +48,9 @@ class MealService:
 
     async def add_meal(self, user_id: int, new_meal: MealDTOPost):
         async with self.db as session:
-
             stmt = select(Meal).where(and_(Meal.UserID == user_id,
-                                           Meal.Date == new_meal.Date,
-                                           Meal.MealType == new_meal.MealType)).options(selectinload(Meal.FoodInMeals))
+                                        Meal.Date == new_meal.Date,
+                                        Meal.MealType == new_meal.MealType)).options(selectinload(Meal.FoodInMeals))
             result = await session.execute(stmt)
             findedMeal = result.scalars().first()
 
@@ -62,7 +60,6 @@ class MealService:
                     MealType=new_meal.MealType,
                     UserID=user_id
                 )
-
                 session.add(findedMeal)
                 await session.flush()
                 food_in_meals_count = 0
@@ -78,7 +75,6 @@ class MealService:
                 Fats=new_meal.Product.Fats,
                 Carbonates=new_meal.Product.Carbonates
             )
-
             session.add(insertedFoodInMeal)
 
             await session.commit()
@@ -129,3 +125,4 @@ class MealService:
             await session.commit()
 
             return None
+        

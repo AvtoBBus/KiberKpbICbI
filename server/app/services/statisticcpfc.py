@@ -36,7 +36,7 @@ class StatisticCPFCService:
                 Date=new_statisticcpfc.Date,
                 Calories=new_statisticcpfc.Calories,
                 Protein=new_statisticcpfc.Protein,
-                Fat=new_statisticcpfc.Fat,
+                Fats=new_statisticcpfc.Fats,
                 Carbonates=new_statisticcpfc.Carbonates,
                 UserID=user_id
             )
@@ -62,7 +62,7 @@ class StatisticCPFCService:
             findedStat.Date = new_statisticcpfc.Date
             findedStat.Calories = new_statisticcpfc.Calories
             findedStat.Protein = new_statisticcpfc.Protein
-            findedStat.Fat = new_statisticcpfc.Fat
+            findedStat.Fats = new_statisticcpfc.Fats
             findedStat.Carbonates = new_statisticcpfc.Carbonates
 
             await session.commit()

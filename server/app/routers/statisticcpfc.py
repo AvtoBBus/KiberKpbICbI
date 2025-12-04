@@ -44,7 +44,7 @@ async def get_statisticcpfc(
             Date=statisticcpfc.Date,
             Calories=statisticcpfc.Calories,
             Protein=statisticcpfc.Protein,
-            Fat=statisticcpfc.Fat,
+            Fats=statisticcpfc.Fats,
             Carbonates=statisticcpfc.Carbonates
         ) for statisticcpfc in stats
     ]
@@ -87,7 +87,7 @@ async def get_statisticcpfc_by_date(
             Date=statisticcpfc.Date,
             Calories=statisticcpfc.Calories,
             Protein=statisticcpfc.Protein,
-            Fat=statisticcpfc.Fat,
+            Fats=statisticcpfc.Fats,
             Carbonates=statisticcpfc.Carbonates
         ) for statisticcpfc in stats
     ]
@@ -129,7 +129,7 @@ async def get_statisticcpfc_id(
         Date=statisticcpfc.Date,
         Calories=statisticcpfc.Calories,
         Protein=statisticcpfc.Protein,
-        Fat=statisticcpfc.Fat,
+        Fats=statisticcpfc.Fats,
         Carbonates=statisticcpfc.Carbonates
     )
 
@@ -163,7 +163,7 @@ async def add_statisticwh(
         Date=inserted.Date,
         Calories=inserted.Calories,
         Protein=inserted.Protein,
-        Fat=inserted.Fat,
+        Fats=inserted.Fats,
         Carbonates=inserted.Carbonates
     )
 

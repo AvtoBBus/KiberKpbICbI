@@ -16,5 +16,5 @@ class UserStatistic(Base):
     UserWeight: Mapped[int] = mapped_column(Integer) 
     Calories: Mapped[int] = mapped_column(Integer) 
     Protein: Mapped[int] = mapped_column(Integer) 
-    Fat: Mapped[int] = mapped_column(Integer) 
+    Fats: Mapped[int] = mapped_column(Integer) 
     Carbonates: Mapped[int] = mapped_column(Integer) 

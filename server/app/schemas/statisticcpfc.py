@@ -10,5 +10,5 @@ class StatisticCPFCDTO(StatisticCPFCBase):
     Date: datetime
     Calories: int 
     Protein: int 
-    Fat: int 
+    Fats: int 
     Carbonates: int

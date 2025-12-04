@@ -46,7 +46,7 @@ async def get_userstatistic(
             UserWeight=userstatistic.UserWeight,
             Calories=userstatistic.Calories,
             Protein=userstatistic.Protein,
-            Fat=userstatistic.Fat,
+            Fats=userstatistic.Fats,
             Carbonates=userstatistic.Carbonates,
         ) for userstatistic in stats
     ]
@@ -58,13 +58,11 @@ async def get_userstatistic_by_date(
     end_date: datetime,
     db: AsyncSession = Depends(get_db)
 ):
-    print(1)
     auth = UserService(db)
     security = Security(db)
 
     try:
         user = await auth.get_user(token)
-        print(2)
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -76,7 +74,6 @@ async def get_userstatistic_by_date(
             detail="Incorrect token",
         )
 
-    print(3)
     if start_date > end_date:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -85,7 +82,6 @@ async def get_userstatistic_by_date(
 
     service = UserStatisticService(db)
     stats = await service.get_userstatistic_by_date(user.UserID, start_date, end_date)
-    print(4)
     return [
         UserStatisticDTO(
             UserID=userstatistic.UserID,
@@ -94,7 +90,7 @@ async def get_userstatistic_by_date(
             UserWeight=userstatistic.UserWeight,
             Calories=userstatistic.Calories,
             Protein=userstatistic.Protein,
-            Fat=userstatistic.Fat,
+            Fats=userstatistic.Fats,
             Carbonates=userstatistic.Carbonates,
         ) for userstatistic in stats
     ]

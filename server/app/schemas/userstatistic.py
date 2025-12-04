@@ -11,7 +11,7 @@ class UserStatisticDTO(UserStatisticBase):
     UserWeight: int 
     Calories: int 
     Protein: int 
-    Fat: int 
+    Fats: int 
     Carbonates: int 
 
     class Config:

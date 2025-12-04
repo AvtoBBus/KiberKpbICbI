@@ -15,7 +15,7 @@ class StatisticCPFC(Base):
     Date: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     Calories: Mapped[int] = mapped_column(Integer)
     Protein: Mapped[int] = mapped_column(Integer)
-    Fat: Mapped[int] = mapped_column(Integer)
+    Fats: Mapped[int] = mapped_column(Integer)
     Carbonates: Mapped[int] = mapped_column(Integer)
 
     UserID: Mapped[int] = mapped_column(ForeignKey("user.UserID"))

@@ -17,12 +17,15 @@ from app.routers import statisticwh as statisticwh_router
 from app.routers import statisticcpfc as statisticcpfc_router
 from app.routers import userstatistic as userstatistic_router
 
+from app.utils.logger import Colors, log_request_info, log_response_info
+
 import logging
 from logging.config import dictConfig
 import time
 import uuid
-from app.utils.logger import Colors, log_request_info, log_response_info
+from dotenv import load_dotenv
 
+load_dotenv()
 
 app = FastAPI(
     swagger_ui_parameters={"syntaxHighlight": True}
@@ -39,7 +42,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.middleware("http")
+@app.middleware("https")
 async def log_requests(request: Request, call_next):
     request_id = str(uuid.uuid4())
     request.state.request_id = request_id
@@ -105,3 +108,7 @@ app.include_router(userstatistic_router.router,
                    prefix=config.settings.api_strings['User']["Statistic"],
                    tags=["Статистика пользователя"]
                    )
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}

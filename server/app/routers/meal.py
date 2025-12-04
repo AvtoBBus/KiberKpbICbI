@@ -11,6 +11,8 @@ from app.utils.security import Security
 from app.services.meal import MealService
 from app.services.user import UserService
 
+from app.services.statisticcpfc import StatisticCPFCService
+from app.schemas.statisticcpfc import StatisticCPFCDTO
 
 router = APIRouter()
 oauth2_scheme = APIKeyHeader(name="token")
@@ -241,6 +243,26 @@ async def add_meal(
     service = MealService(db)
     inserted = await service.add_meal(user.UserID, new_meal)
 
+    statCPFC = StatisticCPFCService(db)
+    prevStat = await statCPFC.get_statisticcpfc_by_date(user.UserID, new_meal.Date, new_meal.Date)
+
+    if not prevStat:
+        newStatCPFC = StatisticCPFCDTO(
+            StatisticCPFCID=0,
+            Date=new_meal.Date,
+            Calories=new_meal.Product.Calories,
+            Protein=new_meal.Product.Protein,
+            Fats=new_meal.Product.Fats,
+            Carbonates=new_meal.Product.Carbonates
+        )
+        await statCPFC.add_statisticcpfc(user.UserID, newStatCPFC)
+    else:
+        prevStat[0].Calories += new_meal.Product.Calories
+        prevStat[0].Protein += new_meal.Product.Protein
+        prevStat[0].Fats += new_meal.Product.Fats
+        prevStat[0].Carbonates += new_meal.Product.Carbonates
+        await statCPFC.edit_statisticcpfc(user.UserID, prevStat[0])
+
     return MealDTO(
             MealID = inserted.MealID,
             Date = inserted.Date,
@@ -292,7 +314,6 @@ async def delete_meal(
 
     response.status_code = status.HTTP_204_NO_CONTENT
     return None
-
 
 @router.delete(BASE_STR + "/{meal_id}/{product_id}")
 async def delete_product_in_meal(
