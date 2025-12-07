@@ -1,7 +1,13 @@
 import React, { useState, useCallback } from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { mainStyle } from "../style";
-import SettingImg from "../assets/img/Setting.js";
+import SettingImg from "../assets/img/SettingGreen.js";
 import BackImg from "../assets/img/Back.js";
 import FooterBloc from "../components/bloc/FooterBloc";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,7 +17,9 @@ import { ACTIVITY, GENDER } from "../utils/constants";
 
 export default function UserView({ navigation }) {
   const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const loadUserData = async () => {
+    setLoading(true);
     try {
       const res = await API.getUserData();
 
@@ -20,6 +28,7 @@ export default function UserView({ navigation }) {
     } catch (err) {
       console.log("Ошибка загрузки:", err);
     }
+    setLoading(false);
   };
 
   useFocusEffect(
@@ -27,6 +36,14 @@ export default function UserView({ navigation }) {
       loadUserData();
     }, [])
   );
+
+  if (loading) {
+    return (
+      <View style={mainStyle.loaderScreen}>
+        <ActivityIndicator size="large" color="#9ED228" />
+      </View>
+    );
+  }
 
   return (
     <View style={{ height: "100%" }}>

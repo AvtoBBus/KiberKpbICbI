@@ -10,7 +10,7 @@ export default function ProgressBarUI({
   style,
   duration = 800,
 }) {
-  const percent = Math.min(current / total, 1);
+  const percent = total > 0 ? current / total : 0;
 
   const animatedWidth = useRef(new Animated.Value(0)).current;
 

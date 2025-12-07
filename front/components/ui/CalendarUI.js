@@ -3,10 +3,10 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 const WEEK_DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
-export default function CalendarUI({ onSelect }) {
+export default function CalendarUI({ selected, onSelect }) {
   const today = new Date();
+
   const [currentDate, setCurrentDate] = useState(today);
-  const [selectedDate, setSelectedDate] = useState(today.toDateString());
 
   const getStartOfWeek = (date) => {
     const day = date.getDay();
@@ -59,18 +59,16 @@ export default function CalendarUI({ onSelect }) {
 
       <View style={styles.daysRow}>
         {days.map((day, idx) => {
-          const isSelected = selectedDate === day.toDateString();
+          const iso = day.toISOString().split("T")[0];
+          const isSelected = selected === iso;
 
           return (
             <TouchableOpacity
               key={idx}
               style={[styles.dayContainer, isSelected && styles.daySelected]}
-              onPress={() => {
-                setSelectedDate(day.toDateString());
-                onSelect?.(day.toISOString().split("T")[0]);
-              }}
+              onPress={() => onSelect(iso)}
             >
-              <Text style={[styles.dayText]}>{day.getDate()}</Text>
+              <Text style={styles.dayText}>{day.getDate()}</Text>
             </TouchableOpacity>
           );
         })}
@@ -138,8 +136,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#000",
   },
-
-  //   dayTextSelected: {
-  //     fontWeight: "400",
-  //   },
 });

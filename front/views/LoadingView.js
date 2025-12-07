@@ -6,13 +6,50 @@ import {
   StyleSheet,
   Alert,
   Text,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { mainStyle } from "../style";
+import { API } from "../api/api.js";
+import { DrawerActions } from "@react-navigation/native";
 
-export default function LoadingView({ navigation }) {
+export default function LoadingView({ route, navigation }) {
   const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!image) {
+      Alert.alert("Ошибка", "Сначала сделайте фото");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // console.log(56);
+      const res = await API.getInfoByPhoto(image);
+
+      setLoading(false);
+      // console.log(res);
+      navigation.navigate("Result", {
+        imgdata: res,
+        image: image,
+        MealType: route.params?.MealType ?? null,
+        date: route.params?.date ?? null,
+      });
+    } catch (err) {
+      setLoading(false);
+
+      navigation.navigate("Result", {
+        imgdata: [],
+        image: image,
+        MealType: route.params?.MealType ?? null,
+        date: route.params?.date ?? null,
+      });
+
+      console.log("Ошибка загрузки:", err.response?.data || err.message);
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -66,6 +103,14 @@ export default function LoadingView({ navigation }) {
     }
   };
 
+  if (loading) {
+    return (
+      <View style={mainStyle.loaderScreen}>
+        <ActivityIndicator size="large" color="#9ED228" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {/* Фото или пустое место */}
@@ -97,7 +142,7 @@ export default function LoadingView({ navigation }) {
           <Ionicons name="radio-button-on-outline" size={64} color="#fff" />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate("Result")}>
+        <TouchableOpacity onPress={handleLogin}>
           <Ionicons name="checkmark" size={42} color="#fff" />
         </TouchableOpacity>
       </View>

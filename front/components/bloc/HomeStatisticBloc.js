@@ -6,13 +6,13 @@ import ProgressBarUI from "../ui/ProgressBarUI";
 export default function HomeStatisticBloc({ userData, userStat }) {
   // const { userData } = route.params ?? {};
   const procent = userData?.Calories
-    ? ((userStat?.Calories ?? 0) * 100) / userData.Calories
+    ? Math.round(((userStat?.Calories ?? 0) * 100) / userData.Calories)
     : 0;
 
   const mod =
     userData?.Calories && userStat?.Calories
       ? userData.Calories - userStat.Calories
-      : "--";
+      : 0;
 
   return (
     <View style={mainStyle.white_bloc}>
@@ -22,7 +22,7 @@ export default function HomeStatisticBloc({ userData, userStat }) {
           <View style={styles.infoRow}>
             <Text style={[mainStyle.p, styles.p_table]}>потреблено</Text>
             <Text style={[mainStyle.p, styles.p_table]}>
-              {userStat?.Calories ?? "--"}
+              {userStat?.Calories ?? 0}
             </Text>
           </View>
           <View style={styles.infoRow}>
@@ -32,7 +32,7 @@ export default function HomeStatisticBloc({ userData, userStat }) {
           <View style={styles.infoRow}>
             <Text style={[mainStyle.p, styles.p_table]}>всего</Text>
             <Text style={[mainStyle.p, styles.p_table]}>
-              {userData?.Calories ?? "--"}
+              {userData?.Calories ?? 0}
             </Text>
           </View>
         </View>
@@ -60,7 +60,7 @@ export default function HomeStatisticBloc({ userData, userStat }) {
         <ProgressBarUI
           style={styles.bar_width}
           title="углеводы"
-          current={userStat?.Carbonatest ?? 0}
+          current={userStat?.Carbonates ?? 0}
           total={userData?.Carbonatest ?? 0}
           color="#40C2FF"
           bgColor="#B6E8FF"

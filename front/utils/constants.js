@@ -9,3 +9,9 @@ export const GENDER = {
   ж: "Женский",
   м: "Мужской",
 };
+
+export const MEAL_TYPE = {
+  1: "Завтрак",
+  2: "Обед",
+  3: "Ужин",
+};

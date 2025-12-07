@@ -94,4 +94,9 @@ export const mainStyle = StyleSheet.create({
     borderRadius: 10,
     gap: 10,
   },
+  loaderScreen: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -8,20 +8,39 @@ import {
   Animated,
 } from "react-native";
 import Addimg from "../../assets/img/Add.js";
+import TableUI from "../ui/TableUI.js";
 
 export default function HomeLanchBloc({
   title = "Завтрак",
   calories = "--",
   image,
   onAdd = () => {},
-  dropdownText = "Дописать когда будет готов запрос",
+  onToggle = () => {},
+  onDelete = () => {},
+  dropdownInfo = [],
 }) {
   const [open, setOpen] = useState(false);
-  const animatedHeight = useState(new Animated.Value(0))[0];
+  //   const [hasLoaded, setHasLoaded] = useState(false);
+
+  const animatedHeight = useRef(new Animated.Value(0)).current;
+  const contentHeight = useRef(0);
+
+  const getCalories = (products) => {
+    if (!Array.isArray(products)) return 0;
+
+    return products.reduce((sum, item) => sum + (item.Calories || 0), 0);
+  };
 
   const toggle = () => {
-    const toValue = open ? 0 : 1;
-    setOpen(!open);
+    const nextOpen = !open;
+    setOpen(nextOpen);
+
+    // if (nextOpen && !hasLoaded) {
+    //   onToggle();
+    //   setHasLoaded(true);
+    // }
+
+    const toValue = nextOpen ? contentHeight.current : 0;
 
     Animated.timing(animatedHeight, {
       toValue,
@@ -30,34 +49,32 @@ export default function HomeLanchBloc({
     }).start();
   };
 
-  const dropdownHeight = animatedHeight.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 70],
-  });
-
   return (
     <View style={styles.card}>
       <TouchableOpacity style={styles.row} onPress={toggle} activeOpacity={0.8}>
-        {/* Картинка */}
         <Image source={image} style={styles.avatar} />
 
-        {/* Текст */}
         <View style={styles.textBlock}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.calories}>
-            <Text style={styles.green}>{calories}</Text> ккал
+            <Text style={styles.green}>{getCalories(dropdownInfo)}</Text> ккал
           </Text>
         </View>
 
-        {/* Кнопка + */}
         <TouchableOpacity style={styles.addBtn} onPress={onAdd}>
           <Addimg width={40} height={40} />
         </TouchableOpacity>
       </TouchableOpacity>
 
-      {/* Dropdown */}
-      <Animated.View style={[styles.dropdown, { height: dropdownHeight }]}>
-        <Text style={styles.dropdownText}>{dropdownText}</Text>
+      <Animated.View style={[styles.dropdown, { height: animatedHeight }]}>
+        <View
+          style={{ position: "absolute", top: 0, left: 0, right: 0 }}
+          onLayout={(e) => {
+            contentHeight.current = e.nativeEvent.layout.height;
+          }}
+        >
+          <TableUI data={dropdownInfo} onDelete={(id) => onDelete(id)} />
+        </View>
       </Animated.View>
     </View>
   );
@@ -122,15 +139,8 @@ const styles = StyleSheet.create({
 
   dropdown: {
     overflow: "hidden",
-    backgroundColor: "#F8F8F8",
     marginTop: 10,
     borderRadius: 10,
     paddingHorizontal: 10,
-  },
-
-  dropdownText: {
-    fontSize: 14,
-    paddingTop: 10,
-    color: "#444",
   },
 });
