@@ -15,21 +15,28 @@ import UserImg from "../assets/img/User.js";
 import StatImg from "../assets/img/Stat.js";
 import HomeStatisticBloc from "../components/bloc/HomeStatisticBloc.js";
 import HomeLanchBloc from "../components/bloc/HomeLanchBloc.js";
-import { getToday } from "../utils/functions.js";
+// import { getToday } from "../utils/functions.js";
 import { API } from "../api/api.js";
+import { useContext } from "react";
+import { NotificationContext } from "../store";
+import SkeletonBlock from "../components/bloc/SkeletonBlock.js";
+import { DateContext } from "../store";
 
 export default function HomeView({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [userStat, setUserStat] = useState(null);
+  const { showMessage } = useContext(NotificationContext);
+  const [loadingMain, setLoadingMain] = useState(true);
+  const [loadingMeals, setLoadingMeals] = useState([true, true, true]);
 
   const [mealType, setMealType] = useState([null, null, null]);
   // const [loadingMeals, setLoadingMeals] = useState([false, false, false]);
 
-  const [date, setDate] = useState(getToday());
+  const { date, setDate } = useContext(DateContext);
 
   const loadUserData = async () => {
-    setLoading(true);
+    setLoadingMain(true);
 
     try {
       const stat = await API.getDayStat(date);
@@ -37,29 +44,23 @@ export default function HomeView({ navigation }) {
 
       setUserStat(stat);
       setUserData(norm);
-
-      console.log(1, stat);
-      console.log(2, norm);
     } catch (err) {
-      console.log("Ошибка загрузки:", err);
+      showMessage(err.response?.data?.message || "Ошибка загрузки");
     }
 
-    setLoading(false);
+    setLoadingMain(false);
   };
 
   const loadMealProduct = async (id) => {
     const index = id - 1;
 
-    // if (mealType[index] !== null) return;
-
-    // setLoadingMeals((prev) => {
-    //   const updated = [...prev];
-    //   updated[index] = true;
-    //   return updated;
-    // });
+    setLoadingMeals((prev) => {
+      const arr = [...prev];
+      arr[index] = true;
+      return arr;
+    });
 
     try {
-      console.log("приемы пищи");
       const res = await API.getProductMeal(id, date);
 
       setMealType((prev) => {
@@ -67,53 +68,45 @@ export default function HomeView({ navigation }) {
         updated[index] = res;
         return updated;
       });
-
-      // console.log("приемы пищи", res);
-      // console.log("завтрак", mealType[0]);
-      // console.log("обед", mealType[1]);
-      // console.log("ужин", mealType[2]);
-      // // console.log("завтрак п", mealType[0].Products);
-      // // console.log("обед п", mealType[1].Products);
-      // console.log("ужин п", mealType[2]).Products;
     } catch (err) {
-      console.log("Ошибка загрузки приемы пищи:", err);
+      showMessage(err.response?.data?.message || "Ошибка приема пищи");
     }
 
-    // setLoadingMeals((prev) => {
-    //   const updated = [...prev];
-    //   updated[index] = false;
-    //   return updated;
-    // });
+    setLoadingMeals((prev) => {
+      const arr = [...prev];
+      arr[index] = false;
+      return arr;
+    });
   };
 
-  const deleteMealTypeProduct = async (productId, mealId) => {
-    const index = mealId - 1;
+  const loaderPostDelete = async (id) => {
+    try {
+      const stat = await API.getDayStat(date);
 
-    // setLoadingMeals((prev) => {
-    //   const updated = [...prev];
-    //   updated[index] = true;
-    //   return updated;
-    // });
+      setUserStat(stat);
 
+      // console.log(1, stat);
+      // console.log(2, norm);
+    } catch (err) {
+      const msg = err.response?.data?.message || "Ошибка загрузки";
+      showMessage(msg);
+      console.log("Ошибка загрузки:", err);
+    }
+  };
+
+  const deleteMealTypeProduct = async (productId, mealId, id) => {
     try {
       await API.deleteProductMeal(productId, mealId);
 
-      const res = await API.getProductMeal(mealId, date);
+      loaderPostDelete();
 
-      setMealType((prev) => {
-        const updated = [...prev];
-        updated[index] = res;
-        return updated;
-      });
+      loadMealProduct(id);
+      // loadUserData();
     } catch (err) {
+      const msg = err.response?.data?.message || "Ошибка удаления";
+      showMessage(msg);
       console.log("Ошибка удаления:", err);
     }
-
-    // setLoadingMeals((prev) => {
-    //   const updated = [...prev];
-    //   updated[index] = false;
-    //   return updated;
-    // });
   };
 
   useEffect(() => {
@@ -136,13 +129,13 @@ export default function HomeView({ navigation }) {
     }, [date])
   );
 
-  if (loading) {
-    return (
-      <View style={styles.loaderScreen}>
-        <ActivityIndicator size="large" color="#9ED228" />
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View style={styles.loaderScreen}>
+  //       <ActivityIndicator size="large" color="#9ED228" />
+  //     </View>
+  //   );
+  // }
 
   return (
     <View style={{ height: "100%" }}>
@@ -163,7 +156,6 @@ export default function HomeView({ navigation }) {
           />
 
           <HomeStatisticBloc userData={userData} userStat={userStat} />
-
           <View style={{ marginTop: 20, gap: 10 }}>
             <HomeLanchBloc
               image={require("../assets/img/br.png")}
@@ -172,8 +164,11 @@ export default function HomeView({ navigation }) {
                 navigation.navigate("Loading", { MealType: 1, date })
               }
               // onToggle={() => loadMealProduct(1)}
-              onDelete={(id) => deleteMealTypeProduct(id, 1)}
+              onDelete={(id) =>
+                deleteMealTypeProduct(id, mealType[0]?.[0]?.MealID, 1)
+              }
               dropdownInfo={mealType[0]?.[0]?.Products ?? []}
+              date={date}
               // loading={loadingMeals[0]}
             />
 
@@ -184,8 +179,11 @@ export default function HomeView({ navigation }) {
                 navigation.navigate("Loading", { MealType: 2, date })
               }
               // onToggle={() => loadMealProduct(2)}
-              onDelete={(id) => deleteMealTypeProduct(id, 2)}
+              onDelete={(id) =>
+                deleteMealTypeProduct(id, mealType[1]?.[0]?.MealID, 2)
+              }
               dropdownInfo={mealType[1]?.[0]?.Products ?? []}
+              date={date}
               // loading={loadingMeals[1]}
             />
 
@@ -196,8 +194,11 @@ export default function HomeView({ navigation }) {
                 navigation.navigate("Loading", { MealType: 3, date })
               }
               // onToggle={() => loadMealProduct(3)}
-              onDelete={(id) => deleteMealTypeProduct(id, 3)}
+              onDelete={(id) =>
+                deleteMealTypeProduct(id, mealType[2]?.[0]?.MealID, 3)
+              }
               dropdownInfo={mealType[2]?.[0]?.Products ?? []}
+              date={date}
               // loading={loadingMeals[2]}
             />
           </View>

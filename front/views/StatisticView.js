@@ -2,8 +2,12 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { mainStyle } from "../style";
 import { BarChart } from "react-native-gifted-charts";
+import { useContext } from "react";
+import { NotificationContext } from "../store";
 
 export default function StatisticView({ navigation }) {
+  const { showMessage } = useContext(NotificationContext);
+
   const data = [
     { value: 330, label: "03.09", frontColor: "#F4A623" },
     { value: 270, label: "04.09", frontColor: "#A4D96C" },

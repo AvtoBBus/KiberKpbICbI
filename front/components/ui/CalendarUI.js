@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 const WEEK_DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
 export default function CalendarUI({ selected, onSelect }) {
-  const today = new Date();
+  const selectedDate = new Date(selected);
+  const [currentDate, setCurrentDate] = useState(selectedDate);
 
-  const [currentDate, setCurrentDate] = useState(today);
+  useEffect(() => {
+    setCurrentDate(new Date(selected));
+  }, [selected]);
 
   const getStartOfWeek = (date) => {
     const day = date.getDay();
@@ -93,7 +96,7 @@ const styles = StyleSheet.create({
   },
 
   arrow: {
-    fontSize: 20,
+    fontSize: 30,
     color: "#9ED228",
   },
 

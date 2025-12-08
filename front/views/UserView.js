@@ -14,10 +14,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { API } from "../api/api.js";
 import { useFocusEffect } from "@react-navigation/native";
 import { ACTIVITY, GENDER } from "../utils/constants";
+import { useContext } from "react";
+import { NotificationContext } from "../store";
 
 export default function UserView({ navigation }) {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { showMessage } = useContext(NotificationContext);
+
   const loadUserData = async () => {
     setLoading(true);
     try {
@@ -26,6 +30,8 @@ export default function UserView({ navigation }) {
       // console.log("ghgh:", res);
       setUserData(res);
     } catch (err) {
+      const msg = err.response?.data?.message || "Ошибка загрузки";
+      showMessage(msg);
       console.log("Ошибка загрузки:", err);
     }
     setLoading(false);

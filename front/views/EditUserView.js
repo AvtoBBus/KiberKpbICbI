@@ -10,10 +10,13 @@ import DropdownUI from "../components/ui/DropdownUI.js";
 import BackImg from "../assets/img/Back.js";
 import { ACTIVITY, GENDER } from "../utils/constants";
 import { mapToOptions } from "../utils/functions.js";
+import { useContext } from "react";
+import { NotificationContext } from "../store";
 
 export default function EditUserView({ route, navigation }) {
   const { Userdata } = route.params ?? {};
   const flag = Userdata && Object.keys(Userdata).length > 0;
+  const { showMessage } = useContext(NotificationContext);
 
   const [focusedField, setFocusedField] = useState(null);
 
@@ -35,6 +38,19 @@ export default function EditUserView({ route, navigation }) {
   };
 
   const handleUser = async () => {
+    if (
+      !formData.Gender ||
+      !formData.Activity ||
+      !formData.UserName.trim() ||
+      !formData.Age ||
+      !formData.Height ||
+      !formData.Weight ||
+      !formData.DesiredWeight ||
+      !formData.DesiredHeight
+    ) {
+      showMessage("Заполните все поля");
+      return;
+    }
     try {
       const payload = {
         ...formData,
@@ -65,6 +81,8 @@ export default function EditUserView({ route, navigation }) {
         navigation.navigate("Home");
       }
     } catch (err) {
+      const msg = err.response?.data?.message || "Ошибка сохранения";
+      showMessage(msg);
       console.log("Ошибка сохранения:", err.response?.data || err.message);
     }
   };

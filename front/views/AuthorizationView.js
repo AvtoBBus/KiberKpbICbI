@@ -8,14 +8,21 @@ import EmailUI from "../components/ui/EmailUI";
 import PasswordInput from "../components/ui/PasswordUI";
 import ButtonUI from "../components/ui/ButtonUI";
 import Fingerprint from "../assets/img/Fingerprint.js";
+import { useContext } from "react";
+import { NotificationContext } from "../store";
 
 export default function AuthorizationView({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [secure, setSecure] = useState(true);
   const [focusedField, setFocusedField] = useState(null);
+  const { showMessage } = useContext(NotificationContext);
 
   const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      showMessage("Введите email и пароль");
+      return;
+    }
     try {
       const res = await AuthAPI.login(email.trim(), password);
       navigation.reset({
@@ -23,6 +30,8 @@ export default function AuthorizationView({ navigation }) {
         routes: [{ name: "Home" }],
       });
     } catch (err) {
+      const msg = err.response?.data?.msg || "Ошибка авторизации";
+      showMessage(msg);
       console.log("Ошибка входа:", err.response?.data || err.message);
     }
   };
@@ -54,7 +63,7 @@ export default function AuthorizationView({ navigation }) {
             onBlur={() => setFocusedField(null)}
             isFocused={focusedField === "password"}
           />
-          <Text style={[styles.text, mainStyle.p_light]}>Забыли пароль?</Text>
+          {/* <Text style={[styles.text, mainStyle.p_light]}>Забыли пароль?</Text> */}
           <ButtonUI
             style={stylesAuth.button}
             title={"Войти"}

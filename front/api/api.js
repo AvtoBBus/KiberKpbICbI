@@ -46,6 +46,7 @@ export const API = {
   // норма кбжу
   putStatNorm: async (config) => {
     const { data } = await api.put("/user/data/normcpfc", config);
+
     return data;
   },
   postStatNorm: async (config) => {
@@ -71,7 +72,7 @@ export const API = {
       },
     });
 
-    console.log(45, data);
+    // console.log(45, data);
 
     return data[0];
   },
@@ -92,7 +93,7 @@ export const API = {
       },
     });
 
-    console.log("фото:", data);
+    // console.log("фото:", data);
     return data;
   },
   // еда по прему пищи в одну дату
@@ -105,6 +106,7 @@ export const API = {
         end_date: end,
       },
     });
+
     // console.log(JSON.stringify(data));
     return data;
   },

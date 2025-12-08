@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -18,12 +18,18 @@ export default function HomeLanchBloc({
   onToggle = () => {},
   onDelete = () => {},
   dropdownInfo = [],
+  date,
 }) {
   const [open, setOpen] = useState(false);
   //   const [hasLoaded, setHasLoaded] = useState(false);
 
   const animatedHeight = useRef(new Animated.Value(0)).current;
   const contentHeight = useRef(0);
+
+  useEffect(() => {
+    setOpen(false);
+    animatedHeight.setValue(0);
+  }, [date]);
 
   const getCalories = (products) => {
     if (!Array.isArray(products)) return 0;
@@ -49,6 +55,16 @@ export default function HomeLanchBloc({
     }).start();
   };
 
+  // useEffect(() => {
+  //   if (open) {
+  //     Animated.timing(animatedHeight, {
+  //       toValue: contentHeight.current,
+  //       duration: 200,
+  //       useNativeDriver: false,
+  //     }).start();
+  //   }
+  // }, [dropdownInfo]);
+
   return (
     <View style={styles.card}>
       <TouchableOpacity style={styles.row} onPress={toggle} activeOpacity={0.8}>
@@ -71,6 +87,10 @@ export default function HomeLanchBloc({
           style={{ position: "absolute", top: 0, left: 0, right: 0 }}
           onLayout={(e) => {
             contentHeight.current = e.nativeEvent.layout.height;
+
+            if (open) {
+              animatedHeight.setValue(contentHeight.current);
+            }
           }}
         >
           <TableUI data={dropdownInfo} onDelete={(id) => onDelete(id)} />

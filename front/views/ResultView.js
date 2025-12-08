@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { NotificationContext } from "../store";
 import {
   View,
   StyleSheet,
@@ -25,6 +26,8 @@ import { API } from "../api/api.js";
 // import DonutChartUI from "../components/ui/DonutChartUI";
 
 export default function ResultView({ route, navigation }) {
+  const { showMessage } = useContext(NotificationContext);
+
   const { imgdata } = route.params ?? {};
   const { image } = route.params ?? {};
   const [focusedField, setFocusedField] = useState(null);
@@ -65,10 +68,19 @@ export default function ResultView({ route, navigation }) {
   };
 
   const handleSend = async () => {
+    if (!formData.Product.ProductName.trim()) {
+      showMessage("Введите название блюда");
+      return;
+    }
+
+    if (!formData.MealType) {
+      showMessage("Выберите прием пищи");
+      return;
+    }
     setLoading(true);
 
     try {
-      console.log(formData);
+      // console.log(formData);
 
       const res = await API.postProductMeal(formData);
       // console.log(res);
@@ -76,6 +88,8 @@ export default function ResultView({ route, navigation }) {
       navigation.navigate("Home");
     } catch (err) {
       setLoading(false);
+      const msg = err.response?.data?.message || "Ошибка добавения";
+      showMessage(msg);
       console.log("Ошибка добавления:", err.response?.data || err.message);
     }
   };

@@ -13,10 +13,13 @@ import * as ImagePicker from "expo-image-picker";
 import { mainStyle } from "../style";
 import { API } from "../api/api.js";
 import { DrawerActions } from "@react-navigation/native";
+import { useContext } from "react";
+import { NotificationContext } from "../store";
 
 export default function LoadingView({ route, navigation }) {
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { showMessage } = useContext(NotificationContext);
 
   const handleLogin = async () => {
     if (!image) {
@@ -46,6 +49,9 @@ export default function LoadingView({ route, navigation }) {
         MealType: route.params?.MealType ?? null,
         date: route.params?.date ?? null,
       });
+
+      const msg = err.response?.data?.message || "Ошибка загрузки";
+      showMessage(msg);
 
       console.log("Ошибка загрузки:", err.response?.data || err.message);
     }

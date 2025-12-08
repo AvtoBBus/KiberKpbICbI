@@ -11,7 +11,7 @@ export default function HomeStatisticBloc({ userData, userStat }) {
 
   const mod =
     userData?.Calories && userStat?.Calories
-      ? userData.Calories - userStat.Calories
+      ? Math.round(userData.Calories - userStat.Calories)
       : 0;
 
   return (
@@ -22,7 +22,7 @@ export default function HomeStatisticBloc({ userData, userStat }) {
           <View style={styles.infoRow}>
             <Text style={[mainStyle.p, styles.p_table]}>потреблено</Text>
             <Text style={[mainStyle.p, styles.p_table]}>
-              {userStat?.Calories ?? 0}
+              {Math.round(userStat?.Calories) ?? 0}
             </Text>
           </View>
           <View style={styles.infoRow}>
@@ -32,7 +32,7 @@ export default function HomeStatisticBloc({ userData, userStat }) {
           <View style={styles.infoRow}>
             <Text style={[mainStyle.p, styles.p_table]}>всего</Text>
             <Text style={[mainStyle.p, styles.p_table]}>
-              {userData?.Calories ?? 0}
+              {Math.round(userData?.Calories) ?? 0}
             </Text>
           </View>
         </View>
@@ -44,24 +44,24 @@ export default function HomeStatisticBloc({ userData, userStat }) {
         <ProgressBarUI
           style={styles.bar_width}
           title="белки"
-          current={userStat?.Protein ?? 0}
-          total={userData?.Protein ?? 0}
+          current={Math.round(userStat?.Protein) ?? 0}
+          total={Math.round(userData?.Protein) ?? 0}
           color="#9ED228"
           bgColor="#E6F5C4"
         />
         <ProgressBarUI
           style={styles.bar_width}
           title="жиры"
-          current={userStat?.Fats ?? 0}
-          total={userData?.Fats ?? 0}
+          current={Math.round(userStat?.Fats) ?? 0}
+          total={Math.round(userData?.Fats) ?? 0}
           color="#F7B31F"
           bgColor="#F9E5B8"
         />
         <ProgressBarUI
           style={styles.bar_width}
           title="углеводы"
-          current={userStat?.Carbonates ?? 0}
-          total={userData?.Carbonatest ?? 0}
+          current={Math.round(userStat?.Carbonates) ?? 0}
+          total={Math.round(userData?.Carbonatest) ?? 0}
           color="#40C2FF"
           bgColor="#B6E8FF"
         />
