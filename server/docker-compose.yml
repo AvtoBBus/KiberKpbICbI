@@ -1,6 +1,21 @@
-version: '3.8'
-
 services:
+    # Redis сервис
+  redis:
+    image: redis:7-alpine
+    container_name: fastapi_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - app-network
+
   mysql:
     image: mysql:8.0
     container_name: mysql_db
@@ -12,7 +27,7 @@ services:
       MYSQL_PASSWORD: "userpassword123"
       MYSQL_ALLOW_EMPTY_PASSWORD: "no"
     ports:
-      - "${DB_PORT}:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./my-sql-init:/docker-entrypoint-initdb.d
@@ -47,6 +62,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - app-network
     command: >
@@ -58,6 +75,7 @@ services:
       "
 
 volumes:
+  redis_data:
   mysql_data:
 
 networks:

@@ -32,7 +32,7 @@ class MealService:
     async def get_meal_by_date(self, user_id: int, start_date: datetime, end_date: datetime) -> List[Meal]:
         async with self.db as session:
             stmt = select(Meal).where(and_(Meal.UserID == user_id, Meal.Date >= start_date, Meal.Date <= end_date)).options(
-                selectinload(Meal.FoodInMeals).selectinload(FoodInMeal.Food))
+                selectinload(Meal.FoodInMeals))
             result = await session.execute(stmt)
             return result.scalars().all()
 

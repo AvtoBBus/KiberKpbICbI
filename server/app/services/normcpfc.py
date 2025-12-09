@@ -27,7 +27,7 @@ class NormCPFCService:
             if checkExist is not None:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="NormCPFC for user already exist"
+                    detail={ "message": "Норма для этого пользователя уже создана" }
                 )
             
             calc = calculatorCPFC(

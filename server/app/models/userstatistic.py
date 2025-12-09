@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Enum
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Enum, Double
 from app.utils.db import Base
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 from datetime import datetime
@@ -12,9 +12,9 @@ class UserStatistic(Base):
     ID: Mapped[int] = mapped_column(Integer, primary_key=True)
     UserID: Mapped[int] = mapped_column(Integer)
     Date: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
-    UserHeight: Mapped[int] = mapped_column(Integer) 
-    UserWeight: Mapped[int] = mapped_column(Integer) 
-    Calories: Mapped[int] = mapped_column(Integer) 
-    Protein: Mapped[int] = mapped_column(Integer) 
-    Fats: Mapped[int] = mapped_column(Integer) 
-    Carbonates: Mapped[int] = mapped_column(Integer) 
+    UserHeight: Mapped[Double] = mapped_column(Double) 
+    UserWeight: Mapped[Double] = mapped_column(Double) 
+    Calories: Mapped[Double] = mapped_column(Double) 
+    Protein: Mapped[Double] = mapped_column(Double) 
+    Fats: Mapped[Double] = mapped_column(Double) 
+    Carbonates: Mapped[Double] = mapped_column(Double) 

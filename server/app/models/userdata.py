@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Enum
+from sqlalchemy import Column, ForeignKey, Integer, String, Enum, Double
 from app.utils.db import Base
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 
@@ -12,9 +12,9 @@ class UserData(Base):
     Activity: Mapped[int] = mapped_column(Integer)
     Age: Mapped[int] = mapped_column(Integer)
     Gender: Mapped[Literal['м', 'ж']] = mapped_column(Enum(*get_args(Literal['м', 'ж'])))
-    Height: Mapped[int] = mapped_column(Integer)
-    Weight: Mapped[int] = mapped_column(Integer)
-    DesiredHeight: Mapped[int] = mapped_column(Integer)
-    DesiredWeight: Mapped[int] = mapped_column(Integer)
+    Height: Mapped[Double] = mapped_column(Double)
+    Weight: Mapped[Double] = mapped_column(Double)
+    DesiredHeight: Mapped[Double] = mapped_column(Double)
+    DesiredWeight: Mapped[Double] = mapped_column(Double)
     
     UserID: Mapped[int] = mapped_column(ForeignKey("user.UserID"))

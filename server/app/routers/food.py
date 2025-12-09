@@ -33,7 +33,7 @@ async def get_food(food_id: int, db: AsyncSession = Depends(get_db)):
     if not food:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Food with id {food_id} not found"
+            detail={ "message": f"Не удалось найти продукт с id {food_id}" }
         )
     
     return FoodDTO(

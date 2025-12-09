@@ -8,5 +8,5 @@ class StatisticWHBase(BaseModel):
 
 class StatisticWHDTO(StatisticWHBase):
     Date: datetime
-    Height: int
-    Weight: int
+    Height: float
+    Weight: float

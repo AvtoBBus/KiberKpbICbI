@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import List, Optional
+from typing import List, Any
 from typing import Literal
 
 
@@ -19,15 +19,15 @@ class Settings(BaseSettings):
                 "Statistic": f"{self.API_STR}/user/statistic"
             },
         }
+    
+    @property
+    def rate_limiter_params(self) -> dict:
+        return {
+            "Times": 20,
+            "Seconds": 60
+        }
 
-    # # Database - теперь берутся из .env
     DATABASE_URL: str = "" #"mysql+aiomysql://root:root@localhost:3306/newschema"
-    # # Или можно разбить на компоненты:
-    # DB_HOST: str = "" #"localhost"
-    # DB_PORT: int = 3306
-    # DB_USER: str = "root"
-    # DB_PASSWORD: str = "root"
-    # DB_NAME: str = "newschema"
     
     @property
     def database_url(self) -> str:

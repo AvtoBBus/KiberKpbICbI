@@ -30,12 +30,12 @@ async def send_image(
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
+            detail={ "message": "Неверный токен" },
         )
     
     contents = await file.read()

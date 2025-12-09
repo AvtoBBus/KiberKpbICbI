@@ -8,7 +8,7 @@ class StatisticCPFCBase(BaseModel):
 
 class StatisticCPFCDTO(StatisticCPFCBase):
     Date: datetime
-    Calories: int 
-    Protein: int 
-    Fats: int 
-    Carbonates: int
+    Calories: float 
+    Protein: float 
+    Fats: float 
+    Carbonates: float

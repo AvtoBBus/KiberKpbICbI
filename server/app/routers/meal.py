@@ -33,12 +33,12 @@ async def get_meal(
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
+            detail={ "message": "Неверный токен" },
         )
 
     service = MealService(db)
@@ -79,18 +79,18 @@ async def get_meal_by_date(
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
+            detail={ "message": "Неверный токен" },
         )
     
     if start_date > end_date:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="StartDate must by below or equal EndDate"
+            detail={ "message": "Дата начала должна быть раньше или равна дате конца" }
         )
 
     service = MealService(db)
@@ -132,18 +132,18 @@ async def get_meal_by_date_and_mealtype(
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
+            detail={ "message": "Неверный токен" },
         )
     
     if start_date > end_date:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="StartDate must by below or equal EndDate"
+            detail={ "message": "Дата начала должна быть раньше или равна дате конца" }
         )
 
     service = MealService(db)
@@ -183,12 +183,12 @@ async def get_meal(
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
+            detail={ "message": "Неверный токен" },
         )
 
     
@@ -198,7 +198,7 @@ async def get_meal(
     if not meal:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Meal with id {meal_id} doesn't exist"
+            detail={ "message": f"Не удалось найти прием пищи с id {meal_id}" }
         )
 
     return MealDTO(
@@ -232,12 +232,12 @@ async def add_meal(
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
+            detail={ "message": "Неверный токен" },
         )
 
     service = MealService(db)
@@ -295,21 +295,49 @@ async def delete_meal(
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
+            detail={ "message": "Неверный токен" },
         )
     
     service = MealService(db)
     try:
-        await service.delete_meal(user.UserID, meal_id)
+        findedMeal = await service.get_meal_id(user.UserID, meal_id)
+
+        if findedMeal:
+            statCPFC = StatisticCPFCService(db)
+            prevStat = await statCPFC.get_statisticcpfc_by_date(user.UserID, findedMeal.Date, findedMeal.Date)
+
+            SumCalories = 0
+            SumProtein = 0
+            SumFats = 0
+            SumCarbonates = 0
+
+            for fim in findedMeal.FoodInMeals:
+                SumCalories += fim.Calories
+                SumProtein += fim.Protein
+                SumFats += fim.Fats
+                SumCarbonates += fim.Carbonates
+
+
+            prevStat[0].Calories -= SumCalories
+            prevStat[0].Protein -= SumProtein
+            prevStat[0].Fats -= SumFats
+            prevStat[0].Carbonates -= SumCarbonates
+
+            await service.delete_meal(user.UserID, meal_id)
+            await statCPFC.edit_statisticcpfc(user.UserID, prevStat[0])
+
+        else:
+            raise ValueError
+
     except: 
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Meal with id {meal_id} doesn't exist"
+            detail={ "message": f"Не удалось найти прием пищи с id {meal_id}" }
         )
 
     response.status_code = status.HTTP_204_NO_CONTENT
@@ -331,26 +359,54 @@ async def delete_product_in_meal(
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
+            detail={ "message": "Неверный токен" },
         )
     
     service = MealService(db)
     try:
-        await service.delete_product_in_meal(user.UserID, meal_id, product_id)
+
+        findedMeal = await service.get_meal_id(user.UserID, meal_id)
+
+        if findedMeal:
+            statCPFC = StatisticCPFCService(db)
+            prevStat = await statCPFC.get_statisticcpfc_by_date(user.UserID, findedMeal.Date, findedMeal.Date)
+
+            findedFim = None
+
+            for fim in findedMeal.FoodInMeals:
+                if fim.ProductID == product_id:
+                    findedFim = fim
+                    break
+
+            if not findedFim:
+                raise IndexError
+            
+
+            prevStat[0].Calories -= findedFim.Calories
+            prevStat[0].Protein -= findedFim.Protein
+            prevStat[0].Fats -= findedFim.Fats
+            prevStat[0].Carbonates -= findedFim.Carbonates
+
+            await service.delete_product_in_meal(user.UserID, meal_id, product_id)
+            await statCPFC.edit_statisticcpfc(user.UserID, prevStat[0])
+
+        else:
+            raise ValueError
+
     except ValueError: 
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Meal with id {meal_id} doesn't exist"
+            detail={ "message": f"Не удалось найти прием пищи с id {meal_id}" }
         )
     except IndexError: 
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Product with id {product_id} in meal with id {meal_id} doesn't exist"
+            detail={ "message": f"Не удалось найти продукт с id {product_id} в приеме пищи с id {meal_id}" }
         )
 
     response.status_code = status.HTTP_204_NO_CONTENT

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Double, String, Double
 from app.utils.db import Base
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 
@@ -8,13 +8,13 @@ class NormCPFC(Base):
     
     NormID: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
-    Weight: Mapped[int] = mapped_column(Integer)
-    Height: Mapped[int] = mapped_column(Integer)
-    DesiredWeight: Mapped[int] = mapped_column(Integer)
+    Weight: Mapped[Double] = mapped_column(Double)
+    Height: Mapped[Double] = mapped_column(Double)
+    DesiredWeight: Mapped[Double] = mapped_column(Double)
 
-    Calories: Mapped[int] = mapped_column(Integer)
-    Protein: Mapped[int] = mapped_column(Integer)
-    Fats: Mapped[int] = mapped_column(Integer)
-    Carbonatest: Mapped[int] = mapped_column(Integer)
+    Calories: Mapped[Double] = mapped_column(Double)
+    Protein: Mapped[Double] = mapped_column(Double)
+    Fats: Mapped[Double] = mapped_column(Double)
+    Carbonatest: Mapped[Double] = mapped_column(Double)
 
     UserID: Mapped[int] = mapped_column(ForeignKey("user.UserID"))

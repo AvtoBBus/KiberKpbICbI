@@ -30,12 +30,12 @@ async def get_user(
         if not checkToken:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
+            detail={ "message": "Неверный токен" },
         )
 
     return UserDTO(
@@ -56,7 +56,7 @@ async def login(
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
+            detail={ "message": "Неверный логин или пароль" },
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -77,18 +77,18 @@ async def edit(
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
+            detail={ "message": "Неверный токен" },
         )
     
     if credentials.UserID != user.UserID:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Incorrect UserID"
+            detail={ "message": "Неверный пользователь" }
         )
 
     service = UserService(db)
@@ -97,7 +97,7 @@ async def edit(
     except:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Bad request",
+            detail={ "message": "Некоректный запрос" },
         )
     
     return newUser
@@ -114,7 +114,7 @@ async def auth(
     except:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User with this email already exist",
+            detail={ "message": "Этот Email уже занят" },
         )
 
     token = await service.login(credentials)
@@ -135,14 +135,14 @@ async def logout(
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
         
         await auth.logout(user)
     except:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Invalid token"
+            detail={ "message": "Неверный токен" }
         )
 
 
@@ -162,7 +162,7 @@ async def refresh(
     except:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Invalid token",
+            detail={ "message": "Неверный токен" },
         )
 
     return token

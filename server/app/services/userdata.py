@@ -27,7 +27,7 @@ class UserDataService:
             if checkExist is not None:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="UserData for user already exist"
+                    detail={ "message": "Данные для этого пользователя уже созданы" },
                 )
 
             inserted = UserData(

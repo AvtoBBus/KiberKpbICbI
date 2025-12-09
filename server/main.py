@@ -1,5 +1,9 @@
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_limiter import FastAPILimiter
+from fastapi_limiter.depends import RateLimiter
+import redis.asyncio as redis
+from contextlib import asynccontextmanager
 
 from app.config import config
 from app.config.logconfig import LOGGING_CONFIG
@@ -27,9 +31,20 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    redis_client = redis.from_url("redis://redis:6379", encoding="utf-8")
+    await FastAPILimiter.init(redis_client)
+    yield
+    await FastAPILimiter.close()
+
 app = FastAPI(
-    swagger_ui_parameters={"syntaxHighlight": True}
+    swagger_ui_parameters={"syntaxHighlight": True},
+    lifespan=lifespan
 )
+
+rl_times = config.settings.rate_limiter_params['Times']
+rl_seconds = config.settings.rate_limiter_params['Seconds']
 
 dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger("myapp")
@@ -69,46 +84,52 @@ async def log_requests(request: Request, call_next):
 
 app.include_router(image_router.router,
                    prefix=config.settings.api_strings['General'],
-                   tags=["Анализ изображения"]
+                   tags=["Анализ изображения"],
+                   dependencies=[Depends(RateLimiter(times=rl_times, seconds=rl_seconds))]
                    )
 
 app.include_router(food_router.router,
                    prefix=config.settings.api_strings['General'],
-                   tags=["Продукты"]
+                   tags=["Продукты"],
+                   dependencies=[Depends(RateLimiter(times=rl_times, seconds=rl_seconds))]
                    )
 
 
 # USER ROUTERS
 app.include_router(normcpfc_router.router,
                    prefix=config.settings.api_strings['User']["Data"],
-                   tags=["Нормы КБЖУ пользователя"]
+                   tags=["Нормы КБЖУ пользователя"],
+                   dependencies=[Depends(RateLimiter(times=rl_times, seconds=rl_seconds))]
                    )
 app.include_router(userdata_router.router,
                    prefix=config.settings.api_strings['User']["Data"],
-                   tags=["Данные пользователя"])
+                   tags=["Данные пользователя"],
+                   dependencies=[Depends(RateLimiter(times=rl_times, seconds=rl_seconds))]
+                   )
 app.include_router(user_router.router,
                    prefix=config.settings.api_strings['User']["Data"],
                    tags=["Получение пользователя"],
+                   dependencies=[Depends(RateLimiter(times=rl_times, seconds=rl_seconds))]
                    )
 app.include_router(meal_router.router,
                    prefix=config.settings.api_strings['User']["Data"],
-                   tags=["Приемы пищи пользователя"]
+                   tags=["Приемы пищи пользователя"],
+                   dependencies=[Depends(RateLimiter(times=rl_times, seconds=rl_seconds))]
                    )
 
 # STATISTIC ROUTERS
 app.include_router(statisticwh_router.router,
                    prefix=config.settings.api_strings['User']["Statistic"],
-                   tags=["Статистика по росту/весу"]
+                   tags=["Статистика по росту/весу"],
+                   dependencies=[Depends(RateLimiter(times=rl_times, seconds=rl_seconds))]
                    )
 app.include_router(statisticcpfc_router.router,
                    prefix=config.settings.api_strings['User']["Statistic"], 
-                   tags=["Статистика по КБЖУ"]
+                   tags=["Статистика по КБЖУ"],
+                   dependencies=[Depends(RateLimiter(times=rl_times, seconds=rl_seconds))]
                    )
 app.include_router(userstatistic_router.router,
                    prefix=config.settings.api_strings['User']["Statistic"],
-                   tags=["Статистика пользователя"]
+                   tags=["Статистика пользователя"],
+                   dependencies=[Depends(RateLimiter(times=rl_times, seconds=rl_seconds))]
                    )
-
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy"}

@@ -5,10 +5,10 @@ from datetime import datetime
 class MealProduct(BaseModel):
     ProductID: int
     ProductName: str
-    Calories: int
-    Protein: int
-    Fats: int
-    Carbonates: int
+    Calories: float
+    Protein: float
+    Fats: float
+    Carbonates: float
 
     class Config:
         from_attributes = True

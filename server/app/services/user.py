@@ -23,7 +23,7 @@ class UserService:
             except:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Incorrect token",
+                    detail={ "message": "Неверный токен" },
             )
 
             stmt = select(User).where(User.UserID == finded.get("UserID"))
@@ -33,7 +33,7 @@ class UserService:
             if data.AccessToken is None or not data.AccessToken.__eq__(token):
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Unauthorized"
+                    detail={ "message": "Не авторизрован" }
                 )
 
             return data
@@ -58,14 +58,14 @@ class UserService:
 
     async def login(self, credentials: Union[UserDTOLogin, User]) -> Token:
         async with self.db as session:
-            security = Security(self.db)
+            security = Security(session)
             try:
                 token = await security.login_for_access_token(
                     email=credentials.Email, password=credentials.Password)
             except:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Incorrect email or password",
+                    detail={ "message": "Неверный логин или пароль" },
                     headers={"WWW-Authenticate": "Bearer"},
                 )
             return token
@@ -78,7 +78,7 @@ class UserService:
             except:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Invalid token"
+                    detail={ "message": "Неверный токен" }
                 )
             return token
 
@@ -92,7 +92,7 @@ class UserService:
             if tryFindUser is not None:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="User with this email already exist",
+                    detail={ "message": "Этот Email уже занят" },
                 )
             
             newUser = User(

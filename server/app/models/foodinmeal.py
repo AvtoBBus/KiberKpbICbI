@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, Enum, String
+from sqlalchemy import Column, ForeignKey, Integer, Enum, String, Double
 from app.utils.db import Base
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 
@@ -12,10 +12,10 @@ class FoodInMeal(Base):
     
     ProductID: Mapped[int] = mapped_column(Integer)
     ProductName: Mapped[str] = mapped_column(String)
-    Calories: Mapped[int] = mapped_column(Integer)
-    Protein: Mapped[int] = mapped_column(Integer)
-    Fats: Mapped[int] = mapped_column(Integer)
-    Carbonates: Mapped[int] = mapped_column(Integer)
+    Calories: Mapped[Double] = mapped_column(Double)
+    Protein: Mapped[Double] = mapped_column(Double)
+    Fats: Mapped[Double] = mapped_column(Double)
+    Carbonates: Mapped[Double] = mapped_column(Double)
     
     MealID: Mapped[int] = mapped_column(ForeignKey("meal.MealID"))
     Meal: Mapped[list["Meal"]] = relationship(back_populates="FoodInMeals", lazy='joined')

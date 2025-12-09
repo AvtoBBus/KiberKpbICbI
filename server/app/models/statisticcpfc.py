@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, ForeignKey, Double, String, DateTime
 from app.utils.db import Base
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 from datetime import datetime
@@ -13,9 +13,9 @@ class StatisticCPFC(Base):
         primary_key=True, autoincrement=True)
 
     Date: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
-    Calories: Mapped[int] = mapped_column(Integer)
-    Protein: Mapped[int] = mapped_column(Integer)
-    Fats: Mapped[int] = mapped_column(Integer)
-    Carbonates: Mapped[int] = mapped_column(Integer)
+    Calories: Mapped[Double] = mapped_column(Double)
+    Protein: Mapped[Double] = mapped_column(Double)
+    Fats: Mapped[Double] = mapped_column(Double)
+    Carbonates: Mapped[Double] = mapped_column(Double)
 
     UserID: Mapped[int] = mapped_column(ForeignKey("user.UserID"))

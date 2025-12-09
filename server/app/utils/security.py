@@ -44,7 +44,7 @@ class Security:
             if not user:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Incorrect email or password",
+                    detail={ "message": "Неверный логин или пароль" },
                     headers={"WWW-Authenticate": "Bearer"},
                 )
 
@@ -76,7 +76,7 @@ class Security:
             if not findedUser:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Incorrect email or password"
+                    detail={ "message": "Неверный логин или пароль" }
                 )
 
             findedUser.RefreshToken = refresh_token
@@ -119,7 +119,7 @@ class Security:
             if not (findedUser) or not (findedUser.AccessToken.__eq__(access_token)) or not (findedUser.RefreshToken.__eq__(refresh_token)):
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Invalid token"
+                    detail={ "message": "Неверный токен" }
                 )
 
             access_token_expires = timedelta(

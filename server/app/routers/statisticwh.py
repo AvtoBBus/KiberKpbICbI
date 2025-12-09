@@ -27,12 +27,12 @@ async def get_statisticwh(
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
+            detail={ "message": "Неверный токен" },
         )
 
     service = StatisticWHService(db)
@@ -61,18 +61,18 @@ async def get_statisticwh_by_date(
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
+            detail={ "message": "Неверный токен" },
         )
 
     if start_date > end_date:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="StartDate must by below or equal EndDate"
+            detail={ "message": "Дата начала должна быть раньше или равна дате конца" }
         )
 
     service = StatisticWHService(db)
@@ -100,12 +100,12 @@ async def get_statisticwh_id(
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
+            detail={ "message": "Неверный токен" },
         )
     
     service = StatisticWHService(db)
@@ -114,7 +114,7 @@ async def get_statisticwh_id(
     if not statisticwh:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Statistic about WH with id {statisticwh_id} doesn't exist"
+            detail={ "message": f"Не удалось найти статистику по КБЖУ с id {statisticwh_id}" }
         )
 
     return StatisticWHDTO(
@@ -140,12 +140,12 @@ async def add_statisticwh(
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
+            detail={ "message": "Неверный токен" },
         )
     
     service = StatisticWHService(db)
@@ -171,12 +171,12 @@ async def edit_statisticwh(
         if not await security.check_user_token(token, user.UserID):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect token",
+                detail={ "message": "Неверный токен" },
             )
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect token",
+            detail={ "message": "Неверный токен" },
         )
     
     service = StatisticWHService(db)
@@ -185,7 +185,7 @@ async def edit_statisticwh(
     except:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Statistic about WH with id {new_statisticwh.StatisticWHID} doesn't exist"
+            detail={ "message": f"Не удалось найти статистику по КБЖУ с id {new_statisticwh.StatisticWHID}" }
         )
     
     return updated

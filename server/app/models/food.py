@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, Double
 from app.utils.db import Base
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 
@@ -8,10 +8,10 @@ class Food(Base):
     FoodID: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     
     Name: Mapped[str] = mapped_column(String)
-    Calories: Mapped[int] = mapped_column(Integer)
-    Protein: Mapped[int] = mapped_column(Integer)
-    Fats: Mapped[int] = mapped_column(Integer)
-    Carbonates: Mapped[int] = mapped_column(Integer)
+    Calories: Mapped[Double] = mapped_column(Double)
+    Protein: Mapped[Double] = mapped_column(Double)
+    Fats: Mapped[Double] = mapped_column(Double)
+    Carbonates: Mapped[Double] = mapped_column(Double)
 
     CategoryID: Mapped[int] = mapped_column(ForeignKey("foodcategories.CategoryID"))
     Category: Mapped["FoodCategory"] = relationship(back_populates="Food")
