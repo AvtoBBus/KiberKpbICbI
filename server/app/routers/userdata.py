@@ -43,7 +43,6 @@ async def get_userdata(
         return None
 
     return UserDataDTO(
-            UserDataID=userData.UserDataID,
             UserName=userData.UserName,
             Height=userData.Height,
             Weight=userData.Weight,
@@ -80,7 +79,6 @@ async def add_userdata(
     service = UserDataService(db)
     inserted = await service.add_userdata(user.UserID, new_user_data)
     return UserDataDTO(
-        UserDataID=inserted.UserDataID,
         UserName=inserted.UserName,
         Height=inserted.Height,
         Weight=inserted.Weight,
@@ -119,7 +117,7 @@ async def edit_userdata(
     except:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail={ "message": f"Не удалось найти данные пользователя с id {new_user_data.UserDataID}" }
+            detail={ "message": f"Не удалось найти данные пользователя" }
         )
     
     return updated

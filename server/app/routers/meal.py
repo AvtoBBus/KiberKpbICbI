@@ -246,7 +246,7 @@ async def add_meal(
     statCPFC = StatisticCPFCService(db)
     prevStat = await statCPFC.get_statisticcpfc_by_date(user.UserID, new_meal.Date, new_meal.Date)
 
-    if not prevStat:
+    if prevStat[0].StatisticCPFCID == -1:
         newStatCPFC = StatisticCPFCDTO(
             StatisticCPFCID=0,
             Date=new_meal.Date,

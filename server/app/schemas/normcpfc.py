@@ -2,7 +2,6 @@ from pydantic import BaseModel, EmailStr
 from typing import Literal
 
 class NormCPFCBase(BaseModel):
-    NormID: int
     Height: float
     Weight: float
     DesiredWeight: float

@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from typing import Literal
 
 class UserDataBase(BaseModel):
-    UserDataID: int
     UserName: str
     Activity: int
     Age:int

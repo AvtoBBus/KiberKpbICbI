@@ -41,7 +41,6 @@ async def get_normcpfc(
         return None
 
     return NormCPFCDTO(
-            NormID=norm.NormID,
             Height=norm.Height,
             Weight=norm.Weight,
             DesiredWeight=norm.DesiredWeight,
@@ -78,7 +77,6 @@ async def add_normcpfc(
     inserted = await service.add_normcpfc(user.UserID, new_norm)
     
     return NormCPFCDTO(
-        NormID=inserted.NormID,
         Height=inserted.Height,
         Weight=inserted.Weight,
         DesiredWeight=inserted.DesiredWeight,
@@ -118,7 +116,7 @@ async def edit_normcpfc(
     except:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail={ "message": f"Не удалось найти норму с id {new_norm.NormID}" }
+            detail={ "message": f"Не удалось найти норму" }
         )
     
     return updated
