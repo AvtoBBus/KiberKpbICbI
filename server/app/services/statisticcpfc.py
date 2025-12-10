@@ -32,9 +32,6 @@ class StatisticCPFCService:
 
             count = end_date - start_date
 
-            if count.days == 0:
-                return existed
-
             result = []
 
             for i in range(0, count.days + 1):
