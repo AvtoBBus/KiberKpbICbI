@@ -48,6 +48,8 @@ class Security:
                     headers={"WWW-Authenticate": "Bearer"},
                 )
 
+            print("\n\n\n", config.settings, "\n\n\n", flush=True)
+
             access_token_expires = timedelta(
                 minutes=config.settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
