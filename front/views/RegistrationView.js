@@ -23,6 +23,21 @@ export default function RegistrationView({ navigation }) {
       showMessage("Введите email и пароль для регистрации");
       return;
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      showMessage("Введите корректный email");
+      return;
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{12,}$/;
+
+    if (!passwordRegex.test(password)) {
+      showMessage(
+        "Пароль должен содержать минимум 12 символов, заглавные и строчные буквы и хотя бы один специальный символ"
+      );
+      return;
+    }
+
     try {
       const res = await AuthAPI.registration(email.trim(), password);
       navigation.reset({
@@ -30,9 +45,9 @@ export default function RegistrationView({ navigation }) {
         routes: [{ name: "EditUser" }],
       });
     } catch (err) {
-      const msg = err.response?.data?.msg || "Ошибка регистрации";
+      const msg = err.response?.data?.detail?.message || "Ошибка регистрации";
       showMessage(msg);
-      console.log("Ошибка входа:", err.response?.data.msg || err.message.msg);
+      console.log("Ошибка входа:", err.response?.data);
     }
   };
 

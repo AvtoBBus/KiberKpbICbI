@@ -26,6 +26,10 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    if (error.config?.skipAuthRefresh) {
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
@@ -33,16 +37,20 @@ api.interceptors.response.use(
 
       if (refreshToken) {
         try {
-          const { data } = await axios.post(`${API_URL}/user/data/refresh`, {
-            refreshToken,
+          const { data } = await api.post(`${API_URL}/user/data/refresh`, {
+            refresh_token: refreshToken,
           });
 
           await SecureStore.setItemAsync("accessToken", data.access_token);
+          await SecureStore.setItemAsync("refreshToken", data.refresh_token);
 
-          originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
+          // originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
+          originalRequest.headers.token = data.access_token;
+
           return api(originalRequest);
         } catch (refreshError) {
           console.warn("Срок действия токена истек");
+          console.warn("REFRESH ERROR:", refreshError?.response?.data);
         }
       }
 

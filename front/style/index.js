@@ -87,7 +87,7 @@ export const mainStyle = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 20,
     paddingRight: 20,
-    paddingRight: 20,
+    paddingLeft: 20,
     flexDirection: "column",
     justifyContent: "start",
     alignItems: "center",

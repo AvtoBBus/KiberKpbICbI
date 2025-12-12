@@ -23,6 +23,11 @@ export default function AuthorizationView({ navigation }) {
       showMessage("Введите email и пароль");
       return;
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      showMessage("Введите корректный email");
+      return;
+    }
     try {
       const res = await AuthAPI.login(email.trim(), password);
       navigation.reset({
@@ -30,9 +35,9 @@ export default function AuthorizationView({ navigation }) {
         routes: [{ name: "Home" }],
       });
     } catch (err) {
-      const msg = err.response?.data?.msg || "Ошибка авторизации";
+      const msg = err.response?.data?.detail?.message || "Ошибка авторизации";
       showMessage(msg);
-      console.log("Ошибка входа:", err.response?.data || err.message);
+      console.log("Ошибка входа:", err.response?.data);
     }
   };
 

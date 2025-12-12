@@ -50,10 +50,10 @@ export default function LoadingView({ route, navigation }) {
         date: route.params?.date ?? null,
       });
 
-      const msg = err.response?.data?.message || "Ошибка загрузки";
+      const msg = err.response?.data?.detail?.message || "Ошибка загрузки";
       showMessage(msg);
 
-      console.log("Ошибка загрузки:", err.response?.data || err.message);
+      console.log("Ошибка загрузки:", err.response?.data);
     }
   };
 

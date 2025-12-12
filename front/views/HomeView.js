@@ -42,10 +42,12 @@ export default function HomeView({ navigation }) {
       const stat = await API.getDayStat(date);
       const norm = await API.getStatNorm();
 
+      console.log(stat);
+
       setUserStat(stat);
       setUserData(norm);
     } catch (err) {
-      showMessage(err.response?.data?.message || "Ошибка загрузки");
+      showMessage(err.response?.data?.detail?.message || "Ошибка загрузки");
     }
 
     setLoadingMain(false);
@@ -69,7 +71,7 @@ export default function HomeView({ navigation }) {
         return updated;
       });
     } catch (err) {
-      showMessage(err.response?.data?.message || "Ошибка приема пищи");
+      showMessage(err.response?.data?.detail?.message || "Ошибка приема пищи");
     }
 
     setLoadingMeals((prev) => {
@@ -88,7 +90,7 @@ export default function HomeView({ navigation }) {
       // console.log(1, stat);
       // console.log(2, norm);
     } catch (err) {
-      const msg = err.response?.data?.message || "Ошибка загрузки";
+      const msg = err.response?.data?.detail?.message || "Ошибка загрузки";
       showMessage(msg);
       console.log("Ошибка загрузки:", err);
     }
@@ -103,7 +105,7 @@ export default function HomeView({ navigation }) {
       loadMealProduct(id);
       // loadUserData();
     } catch (err) {
-      const msg = err.response?.data?.message || "Ошибка удаления";
+      const msg = err.response?.data?.detail?.message || "Ошибка удаления";
       showMessage(msg);
       console.log("Ошибка удаления:", err);
     }
@@ -145,7 +147,11 @@ export default function HomeView({ navigation }) {
             <TouchableOpacity onPress={() => navigation.navigate("User")}>
               <UserImg width={36} height={36} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("User")}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Statistic", { totalStat: userData })
+              }
+            >
               <StatImg width={36} height={36} />
             </TouchableOpacity>
           </View>

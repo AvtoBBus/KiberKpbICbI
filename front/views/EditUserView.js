@@ -81,9 +81,9 @@ export default function EditUserView({ route, navigation }) {
         navigation.navigate("Home");
       }
     } catch (err) {
-      const msg = err.response?.data?.message || "Ошибка сохранения";
+      const msg = err.response?.data?.detail?.message || "Ошибка сохранения";
       showMessage(msg);
-      console.log("Ошибка сохранения:", err.response?.data || err.message);
+      console.log("Ошибка сохранения:", err.response?.data);
     }
   };
 

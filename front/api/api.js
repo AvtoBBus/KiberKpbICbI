@@ -26,6 +26,16 @@ export const AuthAPI = {
 
     return data;
   },
+  logout: async () => {
+    const { data } = await api.get("/user/data/logout", {
+      skipAuthRefresh: true,
+    });
+
+    await SecureStore.deleteItemAsync("accessToken");
+    await SecureStore.deleteItemAsync("refreshToken");
+
+    return data;
+  },
 };
 
 export const API = {
@@ -116,6 +126,22 @@ export const API = {
   },
   deleteProductMeal: async (id, meal) => {
     const { data } = await api.delete(`user/data/meal/${meal}/${id}`);
+    return data;
+  },
+
+  // статистика
+  getStatistic: async (from, to) => {
+    const start = `${from}T00:00:00`;
+    const end = `${to}T23:59:59`;
+    const { data } = await api.get(`user/statistic/statisticcpfc/fromTo`, {
+      params: {
+        start_date: start,
+        end_date: end,
+      },
+    });
+    // console.log(78, data);
+
+    // console.log(JSON.stringify(data));
     return data;
   },
 };

@@ -16,6 +16,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { ACTIVITY, GENDER } from "../utils/constants";
 import { useContext } from "react";
 import { NotificationContext } from "../store";
+import ButtonUI from "../components/ui/ButtonUI.js";
 
 export default function UserView({ navigation }) {
   const [userData, setUserData] = useState(null);
@@ -30,11 +31,25 @@ export default function UserView({ navigation }) {
       // console.log("ghgh:", res);
       setUserData(res);
     } catch (err) {
-      const msg = err.response?.data?.message || "Ошибка загрузки";
+      const msg = err.response?.data?.detail?.message || "Ошибка загрузки";
       showMessage(msg);
       console.log("Ошибка загрузки:", err);
     }
     setLoading(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      const res = await AuthAPI.logout();
+    } catch (err) {
+      const msg = err.response?.data?.detail?.message || "Выход из аккаунта";
+      showMessage(msg);
+      // console.log("Проблема с интернетом:", err.response?.data);
+    }
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Authorization" }],
+    });
   };
 
   useFocusEffect(
@@ -116,6 +131,12 @@ export default function UserView({ navigation }) {
               </Text>
             </View>
           </View>
+          <ButtonUI
+            style={[mainStyle.button, { width: "100%" }]}
+            title={"Выйти"}
+            green={true}
+            onPress={handleLogout}
+          />
         </View>
       </SafeAreaView>
       <FooterBloc style={mainStyle.main_footer} navigation={navigation} />

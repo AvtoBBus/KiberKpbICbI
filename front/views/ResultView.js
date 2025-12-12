@@ -88,9 +88,9 @@ export default function ResultView({ route, navigation }) {
       navigation.navigate("Home");
     } catch (err) {
       setLoading(false);
-      const msg = err.response?.data?.message || "Ошибка добавения";
+      const msg = err.response?.data?.detail?.message || "Ошибка добавения";
       showMessage(msg);
-      console.log("Ошибка добавления:", err.response?.data || err.message);
+      console.log("Ошибка добавления:", err.response?.data);
     }
   };
   if (loading) {
