@@ -61,7 +61,14 @@ app = FastAPI(
 rl_times = config.settings.rate_limiter_params['Times']
 rl_seconds = config.settings.rate_limiter_params['Seconds']
 
-dictConfig(LOGGING_CONFIG)
+# Если мы на Vercel (переменная VERCEL_ENV устанавливается автоматически)
+if os.getenv("VERCEL_ENV"):
+    # Простая настройка: все логи пишутся в консоль
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+else:
+    # Ваша локальная конфигурация с файлами
+    dictConfig(LOGGING_CONFIG)
+    
 logger = logging.getLogger("myapp")
 
 app.add_middleware(
