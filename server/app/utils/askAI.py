@@ -88,4 +88,11 @@ def parse_text(text: str):
                 'origin_text': text
             }
     
-    return None
+    return {
+        'calories_min': 0,
+        'calories_max': 0,
+        'proteins': 0,
+        'fats': 0,
+        'carbs': 0,
+        'origin_text': text
+    }
