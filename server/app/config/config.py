@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     def database_url(self) -> str:
         """Формирует URL для подключения к TiDB."""
         if self.TIDB_HOST and self.TIDB_USER and self.TIDB_PASSWORD and self.TIDB_DATABASE:
-            return f"mysql+aiomysql://{self.TIDB_USER}:{self.TIDB_PASSWORD}@{self.TIDB_HOST}:{self.TIDB_PORT}/{self.TIDB_DATABASE}"
+            return f"mysql+aiomysql://{self.TIDB_USER}:{self.TIDB_PASSWORD}@{self.TIDB_HOST}:{self.TIDB_PORT}/{self.TIDB_DATABASE}?ssl_ca=/etc/ssl/cert.pem"
         # fallback для локальной разработки (можно оставить старый URL)
         return "mysql+aiomysql://fastapi_user:userpassword123@localhost:3306/newschema"
 
