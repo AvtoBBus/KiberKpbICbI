@@ -36,7 +36,7 @@ if not redis_url:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    redis_client = redis.from_url("redis://redis:6379", encoding="utf-8")
+    redis_client = redis.from_url(redis_url, encoding="utf-8")
     await FastAPILimiter.init(redis_client)
     yield
     await FastAPILimiter.close()
