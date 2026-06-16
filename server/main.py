@@ -34,6 +34,18 @@ if not redis_url:
     # Значение по умолчанию для локальной разработки
     redis_url = "redis://localhost:6379"
 
+tidb_host = os.getenv("TIDB_HOST")
+tidb_port = os.getenv("TIDB_PORT", "4000")
+tidb_user = os.getenv("TIDB_USER")
+tidb_password = os.getenv("TIDB_PASSWORD")
+tidb_database = os.getenv("TIDB_DATABASE")
+
+if tidb_host and tidb_user and tidb_password and tidb_database:
+    config.settings.DATABASE_URL = f"mysql+aiomysql://{tidb_user}:{tidb_password}@{tidb_host}:{tidb_port}/{tidb_database}"
+else:
+    # fallback для локальной разработки (или ошибка)
+    config.settings.DATABASE_URL = "mysql+aiomysql://fastapi_user:userpassword123@localhost:3306/newschema"
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     redis_client = redis.from_url(redis_url, encoding="utf-8")
