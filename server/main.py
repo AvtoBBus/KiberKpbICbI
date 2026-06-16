@@ -28,6 +28,7 @@ from logging.config import dictConfig
 import time
 import uuid
 import os
+import sys
 
 redis_url = os.getenv("REDIS_URL")  # или "KV_URL", проверьте в настройках проекта
 if not redis_url:
@@ -68,7 +69,7 @@ if os.getenv("VERCEL_ENV"):
 else:
     # Ваша локальная конфигурация с файлами
     dictConfig(LOGGING_CONFIG)
-    
+
 logger = logging.getLogger("myapp")
 
 app.add_middleware(
