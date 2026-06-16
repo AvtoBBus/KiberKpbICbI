@@ -1,7 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import List, Any
-from typing import Literal
-
+from typing import List, Literal
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "FoodDetectorAPI"
@@ -10,8 +8,15 @@ class Settings(BaseSettings):
     
     API_STR: str = "/api"
 
+    # Переменные для TiDB (будут загружены из окружения, имена как в Vercel)
+    TIDB_HOST: str = ""
+    TIDB_PORT: str = "4000"
+    TIDB_USER: str = ""
+    TIDB_PASSWORD: str = ""
+    TIDB_DATABASE: str = ""
+
     @property
-    def api_strings(self) -> object:
+    def api_strings(self) -> dict:
         return {
             "General": f"{self.API_STR}/general",
             "User": {
@@ -22,17 +27,15 @@ class Settings(BaseSettings):
     
     @property
     def rate_limiter_params(self) -> dict:
-        return {
-            "Times": 20,
-            "Seconds": 60
-        }
+        return {"Times": 20, "Seconds": 60}
 
-    DATABASE_URL: str = "" #"mysql+aiomysql://root:root@localhost:3306/newschema"
-    
     @property
     def database_url(self) -> str:
-        """Динамическое формирование DATABASE_URL из компонентов"""
-        return f"mysql+aiomysql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        """Формирует URL для подключения к TiDB."""
+        if self.TIDB_HOST and self.TIDB_USER and self.TIDB_PASSWORD and self.TIDB_DATABASE:
+            return f"mysql+aiomysql://{self.TIDB_USER}:{self.TIDB_PASSWORD}@{self.TIDB_HOST}:{self.TIDB_PORT}/{self.TIDB_DATABASE}"
+        # fallback для локальной разработки (можно оставить старый URL)
+        return "mysql+aiomysql://fastapi_user:userpassword123@localhost:3306/newschema"
 
     # Security
     SECRET_KEY: str = ""
@@ -42,15 +45,12 @@ class Settings(BaseSettings):
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = ["*"]
 
-    # Модель конфигурации для Pydantic v2
     model_config = SettingsConfigDict(
-        env_file=".env",           # Чтение из .env файла
-        env_file_encoding="utf-8", # Кодировка файла
-        case_sensitive=True,       # Чувствительность к регистру
-        env_prefix="APP_",         # Префикс для переменных окружения (опционально)
-        extra="ignore"             # Игнорировать лишние поля
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+        # Убираем префикс, чтобы переменные без APP_ загружались
+        extra="ignore"
     )
 
-
-# Создаем экземпляр настроек
 settings = Settings()
