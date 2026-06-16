@@ -133,3 +133,7 @@ app.include_router(userstatistic_router.router,
                    tags=["Статистика пользователя"],
                    dependencies=[Depends(RateLimiter(times=rl_times, seconds=rl_seconds))]
                    )
+
+@app.get("/")
+async def read_root():
+    return {"message": "Hello World"}
