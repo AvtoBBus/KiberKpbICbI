@@ -6,14 +6,16 @@ from datetime import datetime
 from .user import User
 
 
-class StatisticWH(Base):
-    __tablename__ = "statisticwh"
+class StatisticCPFC(Base):
+    __tablename__ = "statisticcpfc"
 
-    StatisticWHID: Mapped[int] = mapped_column(
+    StatisticCPFCID: Mapped[int] = mapped_column(
         primary_key=True, autoincrement=True)
 
     Date: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
-    Height: Mapped[Double] = mapped_column(Double)
-    Weight: Mapped[Double] = mapped_column(Double)
+    Calories: Mapped[Double] = mapped_column(Double)
+    Protein: Mapped[Double] = mapped_column(Double)
+    Fats: Mapped[Double] = mapped_column(Double)
+    Carbonates: Mapped[Double] = mapped_column(Double)
 
     UserID: Mapped[int] = mapped_column(ForeignKey("user.UserID"))

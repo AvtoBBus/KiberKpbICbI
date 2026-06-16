@@ -9,4 +9,4 @@ class UserGoal(Base):
     Name: Mapped[str] = mapped_column(String)
     Description: Mapped[str] = mapped_column(String)
 
-    NormCPFC: Mapped[list["NormCPFC"]] = relationship(back_populates="Goal")
+    UserID: Mapped[int] = mapped_column(ForeignKey("user.UserID"))

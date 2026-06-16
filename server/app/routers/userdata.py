@@ -1,46 +1,123 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from typing import List
-from app.schemas.userdata import UserDataResponse
+from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi.security import APIKeyHeader
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.schemas.userdata import UserDataDTO, UserDataDTO
 from app.utils.db import get_db
 from app.services.userdata import UserDataService
+from app.services.user import UserService
+from app.utils.security import Security
+
+from typing import Optional, Annotated
 
 router = APIRouter()
+oauth2_scheme = APIKeyHeader(name="token")
 
 
-@router.get("/userdata/{user_id}", response_model=List[UserDataResponse])
-def get_userdata(user_id: int, db: Session = Depends(get_db)):
+@router.get("/userdata", response_model=Optional[UserDataDTO])
+async def get_userdata(
+    token: Annotated[str, Depends(oauth2_scheme)], 
+    db: AsyncSession = Depends(get_db)
+):
+
+    auth = UserService(db)
+    security = Security(db)
+
+    try:
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={ "message": "Неверный токен" },
+            )
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={ "message": "Неверный токен" },
+        )
+
     service = UserDataService(db)
-    data = service.get_userdata(user_id)
-    return [
-        UserDataResponse(
-            UserDataID=userData.UserDataID,
+    userData = await service.get_userdata(user.UserID)
+
+    if userData is None:
+        return None
+
+    return UserDataDTO(
+            UserName=userData.UserName,
             Height=userData.Height,
             Weight=userData.Weight,
+            DesiredHeight=userData.DesiredHeight,
+            DesiredWeight=userData.DesiredWeight,
+            Activity=userData.Activity,
             Age=userData.Age,
-            Norm={
-                "MinHeight": userData.Norm.MinHeight,
-                "MaxHeight": userData.Norm.MaxHeight,
-                "MinWeight": userData.Norm.MinWeight,
-                "MaxWeight": userData.Norm.MaxWeight,
-            }
-        ) for userData in data
-    ]
+            Gender=userData.Gender,
+        )
 
+@router.post("/userdata", response_model=UserDataDTO)
+async def add_userdata(
+    new_user_data: UserDataDTO,
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: AsyncSession = Depends(get_db)
+):
+        
+    auth = UserService(db)
+    security = Security(db)
 
-@router.get("/userdata/{user_id}/{user_data_id}", response_model=UserDataResponse)
-def get_userdata_id(user_id: int, user_data_id: int, db: Session = Depends(get_db)):
+    try:
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={ "message": "Неверный токен" },
+            )
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={ "message": "Неверный токен" },
+        )
+    
     service = UserDataService(db)
-    userData = service.get_userdata_id(user_id, user_data_id)
-    return UserDataResponse(
-        UserDataID=userData.UserDataID,
-        Height=userData.Height,
-        Weight=userData.Weight,
-        Age=userData.Age,
-        Norm={
-            "MinHeight": userData.Norm.MinHeight,
-            "MaxHeight": userData.Norm.MaxHeight,
-            "MinWeight": userData.Norm.MinWeight,
-            "MaxWeight": userData.Norm.MaxWeight,
-        }
+    inserted = await service.add_userdata(user.UserID, new_user_data)
+    return UserDataDTO(
+        UserName=inserted.UserName,
+        Height=inserted.Height,
+        Weight=inserted.Weight,
+        DesiredHeight=inserted.DesiredHeight,
+        DesiredWeight=inserted.DesiredWeight,
+        Activity=inserted.Activity,
+        Age=inserted.Age,
+        Gender=inserted.Gender,
     )
+
+@router.put("/userdata", response_model=UserDataDTO)
+async def edit_userdata(
+    new_user_data: UserDataDTO,
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: AsyncSession = Depends(get_db)
+):
+    auth = UserService(db)
+    security = Security(db)
+
+    try:
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={ "message": "Неверный токен" },
+            )
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={ "message": "Неверный токен" },
+        )
+    
+    service = UserDataService(db)
+    try:
+        updated = await service.edit_userdata(user.UserID, new_user_data)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={ "message": f"Не удалось найти данные пользователя" }
+        )
+    
+    return updated

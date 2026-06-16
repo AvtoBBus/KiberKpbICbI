@@ -1,45 +1,122 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from typing import List
-from app.schemas.normcpfc import NormCPFCResponse
-from app.utils.db import get_db
+from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi.security import APIKeyHeader
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.schemas.normcpfc import NormCPFCDTO, NormCPFCDTO, NormCPFCDTOPost
 from app.services.normcpfc import NormCPFCService
+from app.services.user import UserService
+from app.utils.security import Security
+from app.utils.db import get_db
+
+from typing import Optional, Annotated
 
 router = APIRouter()
+oauth2_scheme = APIKeyHeader(name="token")
 
+@router.get("/normcpfc", response_model=Optional[NormCPFCDTO])
+async def get_normcpfc(
+    token: Annotated[str, Depends(oauth2_scheme)], 
+    db: AsyncSession = Depends(get_db)
+):
+    auth = UserService(db)
+    security = Security(db)
 
-@router.get("/normcpfc", response_model=List[NormCPFCResponse])
-def get_normcpfc(db: Session = Depends(get_db)):
+    try:
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={ "message": "Неверный токен" },
+            )
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={ "message": "Неверный токен" },
+        )
+
     service = NormCPFCService(db)
-    norms = service.get_normcpfc()
-    return [
-        NormCPFCResponse(
-            NormID=norm.NormID,
-            MinHeight=norm.MinHeight,
-            MaxHeight=norm.MaxHeight,
-            MinWeight=norm.MinWeight,
-            MaxWeight=norm.MaxWeight,
+    norm = await service.get_normcpfc(user.UserID)
+
+    if norm is None:
+        return None
+
+    return NormCPFCDTO(
+            Height=norm.Height,
+            Weight=norm.Weight,
+            DesiredWeight=norm.DesiredWeight,
             Calories=norm.Calories,
             Protein=norm.Protein,
             Fats=norm.Fats,
             Carbonatest=norm.Carbonatest,
-            Goal=norm.Goal.Name
-        ) for norm in norms
-    ]
+        )
 
-@router.get("/normcpfc/{norm_id}", response_model=NormCPFCResponse)
-def get_normcpfc_id(norm_id: int, db: Session = Depends(get_db)):
+@router.post("/normcpfc", response_model=NormCPFCDTO)
+async def add_normcpfc(
+    new_norm: NormCPFCDTOPost,
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: AsyncSession = Depends(get_db)
+):
+    
+    auth = UserService(db)
+    security = Security(db)
+
+    try:
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={ "message": "Неверный токен" },
+            )
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={ "message": "Неверный токен" },
+        )
+
     service = NormCPFCService(db)
-    norm = service.get_normcpfc_id(norm_id)
-    return NormCPFCResponse(
-        NormID=norm.NormID,
-        MinHeight=norm.MinHeight,
-        MaxHeight=norm.MaxHeight,
-        MinWeight=norm.MinWeight,
-        MaxWeight=norm.MaxWeight,
-        Calories=norm.Calories,
-        Protein=norm.Protein,
-        Fats=norm.Fats,
-        Carbonatest=norm.Carbonatest,
-        Goal=norm.Goal.Name
+    inserted = await service.add_normcpfc(user.UserID, new_norm)
+    
+    return NormCPFCDTO(
+        Height=inserted.Height,
+        Weight=inserted.Weight,
+        DesiredWeight=inserted.DesiredWeight,
+        Calories=inserted.Calories,
+        Protein=inserted.Protein,
+        Fats=inserted.Fats,
+        Carbonatest=inserted.Carbonatest,
     )
+
+@router.put("/normcpfc", response_model=NormCPFCDTO)
+async def edit_normcpfc(
+    new_norm: NormCPFCDTOPost,
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: AsyncSession = Depends(get_db)
+):
+    
+    auth = UserService(db)
+    security = Security(db)
+
+    try:
+        user = await auth.get_user(token)
+        if not await security.check_user_token(token, user.UserID):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={ "message": "Неверный токен" },
+            )
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={ "message": "Неверный токен" },
+        )
+
+    service = NormCPFCService(db)
+
+    try:
+        updated = await service.edit_normcpfc(user.UserID, new_norm)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={ "message": f"Не удалось найти норму" }
+        )
+    
+    return updated

@@ -4,9 +4,19 @@ from typing import Any
 class FoodBase(BaseModel):
     FoodID: int
     Name: str
+    Calories: float
+    Protein: float
+    Fats: float
+    Carbonates: float 
 
-class FoodResponse(FoodBase):
+class FoodDTO(FoodBase):
     Category: str
 
+    class Config:
+        from_attributes = True
+
+class FoodDTOPost(FoodBase):
+    CategoryID: int
+    
     class Config:
         from_attributes = True

@@ -1,30 +1,61 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from typing import List
-from app.schemas.food import FoodResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.schemas.food import FoodDTO, FoodDTOPost
 from app.utils.db import get_db
 from app.services.food import FoodService
 
-router = APIRouter()
+from typing import List
 
-@router.get("/foods", response_model=List[FoodResponse])
-def get_food(db: Session = Depends(get_db)):
+router = APIRouter()
+BASE_STR = "/foods"
+
+@router.get(f"{BASE_STR}", response_model=List[FoodDTO])
+async def get_food(db: AsyncSession = Depends(get_db)):
     service = FoodService(db)
-    foods = service.get_foods()
+    foods = await service.get_food()
     return [
-        FoodResponse(
+        FoodDTO(
             FoodID=food.FoodID,
             Name=food.Name,
-            Category=food.Category.CategoryName
+            Category=food.Category.CategoryName,
+            Calories=food.Calories,
+            Protein=food.Protein,
+            Fats=food.Fats,
+            Carbonates=food.Carbonates
         ) for food in foods
     ]
 
-@router.get("/foods/{food_id}", response_model=FoodResponse)
-def get_food(food_id: int, db: Session = Depends(get_db)):
+@router.get(BASE_STR + "/{food_id}", response_model=FoodDTO)
+async def get_food(food_id: int, db: AsyncSession = Depends(get_db)):
     service = FoodService(db)
-    food = service.get_food(food_id)
-    return FoodResponse(
+    food =  await service.get_food_id(food_id)
+    if not food:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={ "message": f"Не удалось найти продукт с id {food_id}" }
+        )
+    
+    return FoodDTO(
         FoodID=food.FoodID,
         Name=food.Name,
-        Category=food.Category.CategoryName
+        Category=food.Category.CategoryName,
+        Calories=food.Calories,
+        Protein=food.Protein,
+        Fats=food.Fats,
+        Carbonates=food.Carbonates
+    )
+
+@router.post(f"{BASE_STR}", response_model=FoodDTO)
+async def add_food(new_food: FoodDTOPost, db: AsyncSession = Depends(get_db)):
+    service = FoodService(db)
+    inserted =  await service.add_food(new_food)
+    return FoodDTO(
+        FoodID=inserted.FoodID,
+        Name=inserted.Name,
+        Category=inserted.Category.CategoryName,
+        Calories=inserted.Calories,
+        Protein=inserted.Protein,
+        Fats=inserted.Fats,
+        Carbonates=inserted.Carbonates
     )

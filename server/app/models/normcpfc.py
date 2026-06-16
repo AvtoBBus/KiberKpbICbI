@@ -1,23 +1,20 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Double, String, Double
 from app.utils.db import Base
 from sqlalchemy.orm import mapped_column, relationship, Mapped
 
-from .usergoal import UserGoal
 
 class NormCPFC(Base):
     __tablename__ = "normcpfc"
     
     NormID: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    MinHeight: Mapped[int] = mapped_column(Integer)
-    MaxHeight: Mapped[int] = mapped_column(Integer)
-    MinWeight: Mapped[int] = mapped_column(Integer)
-    MaxWeight: Mapped[int] = mapped_column(Integer)
-    Calories: Mapped[int] = mapped_column(Integer)
-    Protein: Mapped[int] = mapped_column(Integer)
-    Fats: Mapped[int] = mapped_column(Integer)
-    Carbonatest: Mapped[int] = mapped_column(Integer)
 
-    GoalID: Mapped[int] = mapped_column(ForeignKey("usergoal.GoalID"))
-    Goal: Mapped["UserGoal"] = relationship(back_populates="NormCPFC")
+    Weight: Mapped[Double] = mapped_column(Double)
+    Height: Mapped[Double] = mapped_column(Double)
+    DesiredWeight: Mapped[Double] = mapped_column(Double)
 
-    UserData: Mapped[list["UserData"]] = relationship(back_populates="Norm")
+    Calories: Mapped[Double] = mapped_column(Double)
+    Protein: Mapped[Double] = mapped_column(Double)
+    Fats: Mapped[Double] = mapped_column(Double)
+    Carbonatest: Mapped[Double] = mapped_column(Double)
+
+    UserID: Mapped[int] = mapped_column(ForeignKey("user.UserID"))

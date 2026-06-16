@@ -2,11 +2,11 @@ from pydantic import BaseModel
 from datetime import datetime
 
 
-class StatisticWhBase(BaseModel):
+class StatisticWHBase(BaseModel):
     StatisticWHID: int
 
 
-class StatisticWhResponse(StatisticWhBase):
+class StatisticWHDTO(StatisticWHBase):
     Date: datetime
-    Height: int
-    Weight: int
+    Height: float
+    Weight: float

@@ -1,14 +1,15 @@
 from pydantic import BaseModel
-from typing import Any
+from typing import Literal
 
 class UserDataBase(BaseModel):
-    UserDataID: int
-    Height: int
-    Weight: int
+    UserName: str
+    Activity: int
     Age:int
 
-class UserDataResponse(UserDataBase):
-    Norm: Any
+class UserDataDTO(UserDataBase):
+    Height: float
+    Weight: float
+    DesiredHeight: float
+    DesiredWeight: float
+    Gender: Literal['м', 'ж']
 
-    class Config:
-        from_attributes = True
