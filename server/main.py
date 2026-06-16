@@ -27,9 +27,12 @@ import logging
 from logging.config import dictConfig
 import time
 import uuid
-from dotenv import load_dotenv
+import os
 
-load_dotenv()
+redis_url = os.getenv("REDIS_URL")  # или "KV_URL", проверьте в настройках проекта
+if not redis_url:
+    # Значение по умолчанию для локальной разработки
+    redis_url = "redis://localhost:6379"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
