@@ -59,7 +59,7 @@ def parse_text(text: str):
     ]
     
     for pattern in patterns:
-        match = re.search(pattern, text, re.IGNORECASE | re.DOTALL | re.MULTILINE)
+        match = re.search(pattern, text, re.IGNORECASE)
         if match:
             # Функция для преобразования строки в число (заменяет запятую на точку)
             def parse_number(value_str):
