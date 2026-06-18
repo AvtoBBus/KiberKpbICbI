@@ -65,9 +65,6 @@ export default function HomeView({ navigation }) {
             <TouchableOpacity onPress={() => navigation.navigate("User")}>
               <UserImg width={36} height={36} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("")}>
-              <StatImg width={36} height={36} />
-            </TouchableOpacity>
           </View>
           <CalendarUI onSelect={(date) => setDate(date)} />
           <HomeStatisticBloc userData={userData} userStat={userStat} />

@@ -6,14 +6,14 @@ export const mainStyle = StyleSheet.create({
     bottom: 0,
   },
   h1: {
-    // fontFamily: "regular",
+    fontFamily: "regular",
     fontSize: 24,
     // lineHeight: "110%",
     color: "black",
     textAlign: "center",
   },
   h2: {
-    // fontFamily: "regular",
+    fontFamily: "regular",
     fontSize: 31,
     // lineHeight: "110%",
     color: "black",
@@ -21,7 +21,7 @@ export const mainStyle = StyleSheet.create({
     fontWeight: 600,
   },
   p_input: {
-    // fontFamily: "regular",
+    fontFamily: "regular",
     fontSize: 16,
     // lineHeight: "120%",
     color: "black",

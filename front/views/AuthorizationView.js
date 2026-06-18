@@ -17,10 +17,10 @@ export default function AuthorizationView({ navigation }) {
 
   const handleLogin = async () => {
     try {
-      // const res = await AuthAPI.login(email.trim(), password);
+      const res = await AuthAPI.login(email.trim(), password);
       navigation.reset({
         index: 0,
-        routes: [{ name: "Result" }],
+        routes: [{ name: "Home" }],
       });
     } catch (err) {
       console.log("Ошибка входа:", err.response?.data || err.message);

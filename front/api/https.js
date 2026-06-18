@@ -2,7 +2,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { router } from "../router/routerRef";
 
-const API_URL = "https://v30rkkm9-8000.euw.devtunnels.ms/api";
+const API_URL = "https://food-detector-api.vercel.app/api";
 
 const api = axios.create({
   baseURL: API_URL,

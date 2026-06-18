@@ -20,6 +20,18 @@
       "edgeToEdgeEnabled": true
     },
     "web": {
+      "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1d876ccd-358e-4fb8-be9a-bc534681675e"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/1d876ccd-358e-4fb8-be9a-bc534681675e"
     }
   }
 }

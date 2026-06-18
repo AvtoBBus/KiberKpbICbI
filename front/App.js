@@ -1,23 +1,16 @@
-import { useFonts } from "expo-font";
-import React, { useCallback } from "react";
-import { Text } from "react-native";
-import { FONT_MAP } from "./assets/fonts";
-// import * as SplashScreen from "expo-splash-screen";
-import Router from "./router";
+import React from 'react';
+import Router from './router';
+import { LogBox } from 'react-native';
 
-// SplashScreen.preventAutoHideAsync();
+// Показать все предупреждения
+LogBox.ignoreAllLogs(false);
 
 export default function App() {
-  // const [fontsLoaded] = useFonts(FONT_MAP);
-
-  // const onLayoutRootView = useCallback(async () => {
-  //   if (fontsLoaded) {
-  //     await SplashScreen.hideAsync();
-  //   }
-  // }, [fontsLoaded]);
-
-  // if (!fontsLoaded) {
-  //   return <Text>Загрузка, которую потом сделаем</Text>;
-  // } else
+  // Обработчик ошибок
+  if (typeof ErrorUtils !== 'undefined') {
+    ErrorUtils.setGlobalHandler((error, isFatal) => {
+      console.error('Глобальная ошибка:', error);
+    });
+  }
   return <Router />;
 }
